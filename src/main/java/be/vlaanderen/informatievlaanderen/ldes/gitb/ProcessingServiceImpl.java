@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.gitb;
 
+import be.vlaanderen.informatievlaanderen.ldes.valueobjects.Parameters;
 import com.gitb.core.ValueEmbeddingEnumeration;
 import com.gitb.ps.Void;
 import com.gitb.ps.*;
@@ -17,9 +18,6 @@ public class ProcessingServiceImpl implements ProcessingService {
 
     /** Logger. */
     private static final Logger LOG = LoggerFactory.getLogger(ProcessingServiceImpl.class);
-
-    @Autowired
-    private Utils utils = null;
 
     /**
      * The purpose of the getModuleDefinition call is to inform its caller on how the service is supposed to be called.
@@ -52,18 +50,18 @@ public class ProcessingServiceImpl implements ProcessingService {
     public ProcessResponse process(ProcessRequest processRequest) {
         LOG.info("Received 'process' command from test bed for session [{}]", processRequest.getSessionId());
         ProcessResponse response = new ProcessResponse();
-        response.setReport(utils.createReport(TestResultType.SUCCESS));
+        response.setReport(Utils.createReport(TestResultType.SUCCESS));
         String operation = processRequest.getOperation();
         if (operation == null) {
             throw new IllegalArgumentException("No processing operation provided");
         }
-        String input = utils.getRequiredString(processRequest.getInput(), "input");
+        String input = new Parameters(processRequest.getInput()).getString("input");
         String result = switch (operation) {
             case "uppercase" -> input.toUpperCase();
             case "lowercase" -> input.toLowerCase();
             default -> throw new IllegalArgumentException(String.format("Unexpected operation [%s].", operation));
         };
-        response.getOutput().add(utils.createAnyContentSimple("output", result, ValueEmbeddingEnumeration.STRING));
+        response.getOutput().add(Utils.createAnyContentSimple("output", result, ValueEmbeddingEnumeration.STRING));
         LOG.info("Completed operation [{}]. Input was [{}], output was [{}].", operation, input, result);
         return response;
     }

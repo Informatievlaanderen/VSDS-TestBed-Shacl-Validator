@@ -124,53 +124,6 @@ public class Utils {
     }
 
     /**
-     * Convert the provided content to a string value.
-     *
-     * @param content The content to convert.
-     * @return The string value.
-     */
-    public static String asString(AnyContent content) {
-        if (content == null || content.getValue() == null) {
-            return null;
-        } else if (content.getEmbeddingMethod() == ValueEmbeddingEnumeration.BASE_64) {
-            // Value provided as BASE64 string.
-            return new String(Base64.getDecoder().decode(content.getValue()));
-        } else if (content.getEmbeddingMethod() == ValueEmbeddingEnumeration.URI) {
-            // Value provided as URI to look up.
-            try (HttpClient client = HttpClient.newHttpClient()) {
-                var request = HttpRequest.newBuilder()
-                        .uri(new URI(content.getValue()))
-                        .GET()
-                        .build();
-                return client
-                        .send(request, HttpResponse.BodyHandlers.ofString())
-                        .body();
-            } catch (URISyntaxException e) {
-                throw new IllegalArgumentException(String.format("The provided value [%s] was not a valid URI.", content.getValue()), e);
-            } catch (IOException e) {
-                throw new IllegalArgumentException(String.format(ERROR_TEMPLATE, content.getValue()), e);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                throw new IllegalArgumentException(String.format(ERROR_TEMPLATE, content.getValue()), e);
-            }
-        } else {
-            // Value provided as String.
-            return content.getValue();
-        }
-    }
-
-    /**
-     * Get a single required input for the provided name as a string value.
-     *
-     * @param parameterItems The items to look through.
-     * @param inputName The name of the input to look for.
-     * @return The input's string value.
-     */
-    public static String getRequiredString(List<AnyContent> parameterItems, String inputName) {
-        return asString(getSingleRequiredInputForName(parameterItems, inputName));
-    }
-
-    /**
      * Get a single required input for the provided name as a binary value.
      *
      * @param parameterItems The items to look through.
@@ -203,18 +156,6 @@ public class Utils {
     }
 
     /**
-     * Get a single optional input for the provided name as a string value.
-     *
-     * @param parameterItems The items to look through.
-     * @param inputName The name of the input to look for.
-     * @return The input's string value.
-     */
-    public static Optional<String> getOptionalString(List<AnyContent> parameterItems, String inputName) {
-        var input = getSingleOptionalInputForName(parameterItems, inputName);
-        return input.map(Utils::asString);
-    }
-
-    /**
      * Create a AnyContent object value based on the provided parameters.
      *
      * @param name The name of the value.
@@ -222,7 +163,7 @@ public class Utils {
      * @param embeddingMethod The way in which this value is to be considered.
      * @return The value.
      */
-    public AnyContent createAnyContentSimple(String name, String value, ValueEmbeddingEnumeration embeddingMethod) {
+    public static AnyContent createAnyContentSimple(String name, String value, ValueEmbeddingEnumeration embeddingMethod) {
         AnyContent input = new AnyContent();
         input.setName(name);
         input.setValue(value);

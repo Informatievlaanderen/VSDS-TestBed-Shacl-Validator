@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.gitb;
 
+import be.vlaanderen.informatievlaanderen.ldes.valueobjects.Parameters;
 import com.gitb.ms.Void;
 import com.gitb.ms.*;
 import com.gitb.tr.TestResultType;
@@ -114,10 +115,10 @@ public class MessagingServiceImpl implements MessagingService {
         At this point we would expect the actual communication or simulation to take place. In this sample implementation
         we simply log the message received from the test bed.
          */
-		String messageToSend = utils.getRequiredString(parameters.getInput(), "messageToSend");
+		String messageToSend = new Parameters(parameters.getInput()).getString("messageToSend");
 		LOG.info("The message to send is [{}]", messageToSend);
 		SendResponse response = new SendResponse();
-		response.setReport(utils.createReport(TestResultType.SUCCESS));
+		response.setReport(Utils.createReport(TestResultType.SUCCESS));
 		return response;
 	}
 
