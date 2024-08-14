@@ -9,20 +9,22 @@ import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.RepositoryConnection;
 import org.eclipse.rdf4j.rio.RDFFormat;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+@Component
 public class RepositoryValidator {
 
     private static final String REPO_VALIDATION_URL_TEMPLATE = "%s/rest/repositories/%s/validate/text";
     private static final RDFFormat CONTENT_TYPE = RDFFormat.TURTLE;
     private String repoUrl;
-    @Autowired
-    private Rdf4jRepositoryManager repositoryManager;
-    @Autowired
-    private RequestExecutor requestExecutor;
+    private final Rdf4jRepositoryManager repositoryManager;
+    private final RequestExecutor requestExecutor;
     private RepositoryConnection connection;
 
-    public RepositoryValidator() {
+    public RepositoryValidator(Rdf4jRepositoryManager repositoryManager, RequestExecutor requestExecutor) {
+        this.repositoryManager = repositoryManager;
+        this.requestExecutor = requestExecutor;
     }
 
     public Model validate(Model shaclShape) {

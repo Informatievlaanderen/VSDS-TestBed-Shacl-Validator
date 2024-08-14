@@ -18,8 +18,11 @@ import java.io.*;
 public class LdioManager {
     private static final String PIPELINE_FILE_PATH = "src/main/resources/ldio-pipeline.json";
     private static final String PIPELINE_NAME = "validation-pipeline";
-    @Autowired
-    private RequestExecutor requestExecutor;
+    private final RequestExecutor requestExecutor;
+
+    public LdioManager(RequestExecutor requestExecutor) {
+        this.requestExecutor = requestExecutor;
+    }
 
 
     public void initPipeline(String serverUrl) throws IOException {

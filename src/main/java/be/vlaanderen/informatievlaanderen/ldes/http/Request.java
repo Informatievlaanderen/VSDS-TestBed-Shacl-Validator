@@ -8,8 +8,6 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import java.io.UnsupportedEncodingException;
-
 public class Request {
     private final String url;
     private final String body;
@@ -34,7 +32,7 @@ public class Request {
         this(url, "", method, ContentType.DEFAULT_TEXT);
     }
 
-    public HttpRequestBase createRequest() throws UnsupportedEncodingException {
+    public HttpRequestBase createRequest() {
         return switch (method) {
             case GET -> new HttpGet(url);
             case POST -> {

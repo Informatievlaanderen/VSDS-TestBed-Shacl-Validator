@@ -1,14 +1,12 @@
 package be.vlaanderen.informatievlaanderen.ldes.web;
 
-import com.gitb.core.ValueEmbeddingEnumeration;
-import com.gitb.tr.TAR;
-import com.gitb.tr.TestResultType;
 import be.vlaanderen.informatievlaanderen.ldes.gitb.StateManager;
 import be.vlaanderen.informatievlaanderen.ldes.gitb.TestBedNotifier;
 import be.vlaanderen.informatievlaanderen.ldes.gitb.Utils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import com.gitb.core.ValueEmbeddingEnumeration;
+import com.gitb.tr.TAR;
+import com.gitb.tr.TestResultType;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -40,12 +38,15 @@ import java.util.List;
 @RestController
 public class UserInputController {
 
-    @Autowired
-    private StateManager stateManager = null;
-    @Autowired
-    private TestBedNotifier testBedNotifier = null;
-    @Autowired
-    private Utils utils = null;
+    private final StateManager stateManager;
+    private final TestBedNotifier testBedNotifier;
+    private final Utils utils;
+
+    public UserInputController(StateManager stateManager, TestBedNotifier testBedNotifier, Utils utils) {
+        this.stateManager = stateManager;
+        this.testBedNotifier = testBedNotifier;
+        this.utils = utils;
+    }
 
     /**
      * HTTP GET service to receive input for the test bed.
@@ -56,7 +57,7 @@ public class UserInputController {
      * @param message The message to send. No message will result in an empty string.
      * @return A text configuration message.
      */
-    @RequestMapping(value = "/input", method = RequestMethod.GET)
+    @GetMapping("/input")
     public String provideMessage(@RequestParam(value="session", required = false) String session, @RequestParam(value="message", defaultValue = "") String message) {
         List<String> sessionIds = new ArrayList<>();
         if (session == null) {

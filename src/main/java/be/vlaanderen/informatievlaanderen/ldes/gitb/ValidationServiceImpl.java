@@ -11,16 +11,12 @@ import com.gitb.vs.Void;
 import com.gitb.vs.*;
 import com.google.common.collect.Iterables;
 import org.eclipse.rdf4j.model.Model;
-import org.eclipse.rdf4j.model.ValueFactory;
-import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.eclipse.rdf4j.rio.RDFFormat;
-import org.eclipse.rdf4j.rio.Rio;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.ByteArrayInputStream;
 import java.math.BigInteger;
 
 import static be.vlaanderen.informatievlaanderen.ldes.constants.RDFConstants.*;
