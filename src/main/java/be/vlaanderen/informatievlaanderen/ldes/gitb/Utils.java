@@ -1,38 +1,32 @@
 package be.vlaanderen.informatievlaanderen.ldes.gitb;
 
 import com.gitb.core.*;
-import com.gitb.tr.*;
-import com.gitb.tr.ObjectFactory;
+import com.gitb.tr.TAR;
+import com.gitb.tr.TestResultType;
 import jakarta.xml.ws.WebServiceContext;
-import org.w3c.dom.Element;
 import org.apache.cxf.headers.Header;
-import org.springframework.stereotype.Component;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.w3c.dom.Element;
 
-import jakarta.xml.bind.JAXBElement;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.http.*;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.*;
 import java.util.function.Function;
 
-/**
- * Class containing utility methods.
- */
-@Component
+
 public class Utils {
 
     /** SOAP header name for the ReplyTo address. */
     public static final QName REPLY_TO_QNAME = new QName("http://www.w3.org/2005/08/addressing", "ReplyTo");
     /** SOAP header name for the test session ID. */
     public static final QName TEST_SESSION_ID_QNAME = new QName("http://www.gitb.com", "TestSessionIdentifier", "gitb");
-
-    @Autowired
-    private ObjectFactory objectFactory;
+    private static final String ERROR_TEMPLATE = "Error while calling URI [%s]";
 
     /**
      * Create a report for the given result.
@@ -42,7 +36,7 @@ public class Utils {
      * @param result The overall result of the report.
      * @return The report.
      */
-    public TAR createReport(TestResultType result) {
+    public static TAR createReport(TestResultType result) {
         TAR report = new TAR();
         report.setContext(new AnyContent());
         report.getContext().setType("map");
@@ -82,7 +76,7 @@ public class Utils {
      * @param inputName The name of the input to look for.
      * @return The collected inputs (not null).
      */
-    public List<AnyContent> getInputsForName(List<AnyContent> parameterItems, String inputName) {
+    public static List<AnyContent> getInputsForName(List<AnyContent> parameterItems, String inputName) {
         List<AnyContent> inputs = new ArrayList<>();
         if (parameterItems != null) {
             for (AnyContent anInput: parameterItems) {
@@ -101,7 +95,7 @@ public class Utils {
      * @param inputName The name of the input to look for.
      * @return The input.
      */
-    public AnyContent getSingleRequiredInputForName(List<AnyContent> parameterItems, String inputName) {
+    public static AnyContent getSingleRequiredInputForName(List<AnyContent> parameterItems, String inputName) {
         var inputs = getInputsForName(parameterItems, inputName);
         if (inputs.isEmpty()) {
             throw new IllegalArgumentException(String.format("No input named [%s] was found.", inputName));
@@ -118,7 +112,7 @@ public class Utils {
      * @param inputName The name of the input to look for.
      * @return The input.
      */
-    public Optional<AnyContent> getSingleOptionalInputForName(List<AnyContent> parameterItems, String inputName) {
+    public static Optional<AnyContent> getSingleOptionalInputForName(List<AnyContent> parameterItems, String inputName) {
         var inputs = getInputsForName(parameterItems, inputName);
         if (inputs.isEmpty()) {
             return Optional.empty();
@@ -135,7 +129,7 @@ public class Utils {
      * @param content The content to convert.
      * @return The string value.
      */
-    public String asString(AnyContent content) {
+    public static String asString(AnyContent content) {
         if (content == null || content.getValue() == null) {
             return null;
         } else if (content.getEmbeddingMethod() == ValueEmbeddingEnumeration.BASE_64) {
@@ -143,18 +137,21 @@ public class Utils {
             return new String(Base64.getDecoder().decode(content.getValue()));
         } else if (content.getEmbeddingMethod() == ValueEmbeddingEnumeration.URI) {
             // Value provided as URI to look up.
-            try {
+            try (HttpClient client = HttpClient.newHttpClient()) {
                 var request = HttpRequest.newBuilder()
                         .uri(new URI(content.getValue()))
                         .GET()
                         .build();
-                return HttpClient.newHttpClient()
+                return client
                         .send(request, HttpResponse.BodyHandlers.ofString())
                         .body();
             } catch (URISyntaxException e) {
                 throw new IllegalArgumentException(String.format("The provided value [%s] was not a valid URI.", content.getValue()), e);
-            } catch (IOException | InterruptedException e) {
-                throw new IllegalArgumentException(String.format("Error while calling URI [%s]", content.getValue()), e);
+            } catch (IOException e) {
+                throw new IllegalArgumentException(String.format(ERROR_TEMPLATE, content.getValue()), e);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new IllegalArgumentException(String.format(ERROR_TEMPLATE, content.getValue()), e);
             }
         } else {
             // Value provided as String.
@@ -169,7 +166,7 @@ public class Utils {
      * @param inputName The name of the input to look for.
      * @return The input's string value.
      */
-    public String getRequiredString(List<AnyContent> parameterItems, String inputName) {
+    public static String getRequiredString(List<AnyContent> parameterItems, String inputName) {
         return asString(getSingleRequiredInputForName(parameterItems, inputName));
     }
 
@@ -198,7 +195,7 @@ public class Utils {
             } catch (URISyntaxException e) {
                 throw new IllegalArgumentException(String.format("The provided value [%s] was not a valid URI.", input.getValue()), e);
             } catch (IOException | InterruptedException e) {
-                throw new IllegalArgumentException(String.format("Error while calling URI [%s]", input.getValue()), e);
+                throw new IllegalArgumentException(String.format(ERROR_TEMPLATE, input.getValue()), e);
             }
         } else {
             throw new IllegalArgumentException(String.format("Input [%s] was expected to be provided as a BASE64 string or a URI.", inputName));
@@ -212,9 +209,9 @@ public class Utils {
      * @param inputName The name of the input to look for.
      * @return The input's string value.
      */
-    public Optional<String> getOptionalString(List<AnyContent> parameterItems, String inputName) {
+    public static Optional<String> getOptionalString(List<AnyContent> parameterItems, String inputName) {
         var input = getSingleOptionalInputForName(parameterItems, inputName);
-        return input.map(this::asString);
+        return input.map(Utils::asString);
     }
 
     /**
@@ -285,46 +282,5 @@ public class Utils {
         return Optional.ofNullable(getHeaderValue(context, name, (header) -> ((Element) header.getObject()).getTextContent().trim()));
     }
 
-    /**
-     * Add an information message to the report.
-     *
-     * @param message The message.
-     * @param reportItems The report's items.
-     */
-    public void addReportItemInfo(String message, List<JAXBElement<TestAssertionReportType>> reportItems) {
-        reportItems.add(objectFactory.createTestAssertionGroupReportsTypeInfo(createReportItemContent(message)));
-    }
-
-    /**
-     * Add a warning message to the report.
-     *
-     * @param message The message.
-     * @param reportItems The report's items.
-     */
-    public void addReportItemWarning(String message, List<JAXBElement<TestAssertionReportType>> reportItems) {
-        reportItems.add(objectFactory.createTestAssertionGroupReportsTypeWarning(createReportItemContent(message)));
-    }
-
-    /**
-     * Add an error message to the report.
-     *
-     * @param message The message.
-     * @param reportItems The report's items.
-     */
-    public void addReportItemError(String message, List<JAXBElement<TestAssertionReportType>> reportItems) {
-        reportItems.add(objectFactory.createTestAssertionGroupReportsTypeError(createReportItemContent(message)));
-    }
-
-    /**
-     * Create the internal content of a report's item.
-     *
-     * @param message The message.
-     * @return The content to wrap.
-     */
-    private BAR createReportItemContent(String message) {
-        BAR itemContent = new BAR();
-        itemContent.setDescription(message);
-        return itemContent;
-    }
 
 }
