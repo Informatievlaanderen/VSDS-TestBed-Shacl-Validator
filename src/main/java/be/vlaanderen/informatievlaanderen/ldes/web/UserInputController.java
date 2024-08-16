@@ -40,12 +40,10 @@ public class UserInputController {
 
     private final StateManager stateManager;
     private final TestBedNotifier testBedNotifier;
-    private final Utils utils;
 
-    public UserInputController(StateManager stateManager, TestBedNotifier testBedNotifier, Utils utils) {
+    public UserInputController(StateManager stateManager, TestBedNotifier testBedNotifier) {
         this.stateManager = stateManager;
         this.testBedNotifier = testBedNotifier;
-        this.utils = utils;
     }
 
     /**
@@ -67,9 +65,9 @@ public class UserInputController {
             sessionIds.add(session);
         }
         // Input for the test bed is provided by means of a report.
-        TAR notificationReport = utils.createReport(TestResultType.SUCCESS);
+        TAR notificationReport = Utils.createReport(TestResultType.SUCCESS);
         // The report can include any properties and with any nesting (by nesting list of map types). In this case we add a simple string.
-        notificationReport.getContext().getItem().add(utils.createAnyContentSimple("messageReceived", message, ValueEmbeddingEnumeration.STRING));
+        notificationReport.getContext().getItem().add(Utils.createAnyContentSimple("messageReceived", message, ValueEmbeddingEnumeration.STRING));
         for (String sessionId: sessionIds) {
             testBedNotifier.notifyTestBed(sessionId, null, (String)stateManager.getSessionInfo(sessionId, StateManager.SessionData.CALLBACK_URL), notificationReport);
         }

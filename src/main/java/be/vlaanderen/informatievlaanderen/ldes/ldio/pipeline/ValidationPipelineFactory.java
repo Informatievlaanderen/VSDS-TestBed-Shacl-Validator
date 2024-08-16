@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.ldio.pipeline;
 
+import be.vlaanderen.informatievlaanderen.ldes.ldes.valueobjects.EventStreamProperties;
 import be.vlaanderen.informatievlaanderen.ldes.ldio.valuebojects.LdioPipeline;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -7,13 +8,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 
 public class ValidationPipelineFactory {
-	private static final String PIPELINE_NAME = "validation-pipeline";
+	public static final String PIPELINE_NAME = "validation-pipeline";
 	private static final String PIPELINE_DESCRIPTION = "Pipeline that will only replicate an LDES for validation purposes";
-	private final String ldesUrl;
+	private final EventStreamProperties eventStreamProperties;
 	private final String sparqlHost;
 
-	public ValidationPipelineFactory(String ldesUrl, String sparqlHost) {
-		this.ldesUrl = ldesUrl;
+	public ValidationPipelineFactory(EventStreamProperties eventStreamProperties, String sparqlHost) {
+		this.eventStreamProperties = eventStreamProperties;
 		this.sparqlHost = sparqlHost;
 	}
 
@@ -22,12 +23,12 @@ public class ValidationPipelineFactory {
 				PIPELINE_NAME,
 				PIPELINE_DESCRIPTION,
 				new LdioLdesClientBuilder()
-						.withUrl(ldesUrl)
-						.withVersionOfProperty(ldesUrl)
+						.withUrl(eventStreamProperties.ldesServerUrl())
+						.withVersionOfProperty(eventStreamProperties.versionOfPath())
 						.build(),
 				List.of(new LdioRepositorySinkBuilder()
 						.withSparqlHost(sparqlHost)
-						.withRepositoryId(ldesUrl)
+						.withRepositoryId(eventStreamProperties.collectionName())
 						.build())
 		);
 	}

@@ -22,14 +22,12 @@ public class MessagingServiceImpl implements MessagingService {
 	private static final Logger LOG = LoggerFactory.getLogger(MessagingServiceImpl.class);
 
 	private final StateManager stateManager;
-	private final Utils utils;
 
 	@Resource
 	private WebServiceContext wsContext;
 
-	public MessagingServiceImpl(StateManager stateManager, Utils utils) {
+	public MessagingServiceImpl(StateManager stateManager) {
 		this.stateManager = stateManager;
-		this.utils = utils;
 	}
 
 	/**
@@ -63,9 +61,9 @@ public class MessagingServiceImpl implements MessagingService {
 	public InitiateResponse initiate(InitiateRequest parameters) {
 		InitiateResponse response = new InitiateResponse();
 		// Get the ReplyTo address for the test bed callbacks based on WS-Addressing.
-		String replyToAddress = utils.getReplyToAddressFromHeaders(wsContext).orElseThrow();
+		String replyToAddress = Utils.getReplyToAddressFromHeaders(wsContext).orElseThrow();
 		// Get the test session ID to use for tracking session state.
-		String sessionId = utils.getTestSessionIdFromHeaders(wsContext).orElseThrow();
+		String sessionId = Utils.getTestSessionIdFromHeaders(wsContext).orElseThrow();
 		stateManager.createSession(sessionId, replyToAddress);
 		LOG.info("Initiated a new session [{}] with callback address [{}]", sessionId, replyToAddress);
 		return response;

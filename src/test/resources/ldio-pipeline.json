@@ -8,7 +8,7 @@
       "source-format": "application/n-quads",
       "materialisation": {
         "enabled": true,
-        "version-of-property": "http://test-server/test-collection"
+        "version-of-property": "http://purl.org/dc/terms/isVersionOf"
       }
     }
   },
@@ -17,7 +17,7 @@
       "name": "Ldio:RepositorySink",
       "config": {
         "sparql-host": "http://my-sparql-host.net",
-        "repository-id": "http://test-server/test-collection"
+        "repository-id": "test-collection"
       }
     }
   ]

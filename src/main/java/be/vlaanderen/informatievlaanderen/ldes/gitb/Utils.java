@@ -73,7 +73,7 @@ public class Utils {
 	 * @param context The call's context.
 	 * @return The header's value.
 	 */
-	public Optional<String> getReplyToAddressFromHeaders(WebServiceContext context) {
+	public static Optional<String> getReplyToAddressFromHeaders(WebServiceContext context) {
 		return getHeaderAsString(context, REPLY_TO_QNAME).map(h -> {
 			if (h.endsWith("?wsdl")) {
 				return h;
@@ -89,7 +89,7 @@ public class Utils {
 	 * @param context The call's context.
 	 * @return The header's value.
 	 */
-	public Optional<String> getTestSessionIdFromHeaders(WebServiceContext context) {
+	public static Optional<String> getTestSessionIdFromHeaders(WebServiceContext context) {
 		return getHeaderAsString(context, TEST_SESSION_ID_QNAME);
 	}
 
@@ -101,7 +101,7 @@ public class Utils {
 	 * @param <T>            The type of data extracted.
 	 * @return The extracted data.
 	 */
-	public <T> T getHeaderValue(WebServiceContext context, QName name, Function<Header, T> valueExtractor) {
+	public static  <T> T getHeaderValue(WebServiceContext context, QName name, Function<Header, T> valueExtractor) {
 		return ((List<Header>) context.getMessageContext().get(Header.HEADER_LIST))
 				.stream()
 				.filter(header -> name.equals(header.getName())).findFirst()
@@ -114,7 +114,7 @@ public class Utils {
 	 * @param name The name of the header element to lookup.
 	 * @return The text value of the element.
 	 */
-	public Optional<String> getHeaderAsString(WebServiceContext context, QName name) {
+	public static Optional<String> getHeaderAsString(WebServiceContext context, QName name) {
 		return Optional.ofNullable(getHeaderValue(context, name, header -> ((Element) header.getObject()).getTextContent().trim()));
 	}
 

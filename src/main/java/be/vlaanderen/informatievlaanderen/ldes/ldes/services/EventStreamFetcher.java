@@ -1,7 +1,8 @@
-package be.vlaanderen.informatievlaanderen.ldes.ldes.valueobjects;
+package be.vlaanderen.informatievlaanderen.ldes.ldes.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.http.Request;
 import be.vlaanderen.informatievlaanderen.ldes.http.RequestExecutor;
+import be.vlaanderen.informatievlaanderen.ldes.ldes.valueobjects.EventStreamProperties;
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
 import org.eclipse.rdf4j.model.IRI;
@@ -37,7 +38,7 @@ public class EventStreamFetcher {
 		final Spliterator<Statement> statements = model.getStatements(null, SimpleValueFactory.getInstance().createIRI(LDES_VERSION_OF), null).spliterator();
 		return StreamSupport.stream(statements, false)
 				.findFirst()
-				.map(statement -> new EventStreamProperties(extractCollectionName(statement.getSubject()), statement.getObject().stringValue()))
+				.map(statement -> new EventStreamProperties(url, extractCollectionName(statement.getSubject()), statement.getObject().stringValue()))
 				.orElseThrow(() -> new IllegalStateException("Required properties of event stream for %s could not be found".formatted(url)));
 	}
 
@@ -51,7 +52,7 @@ public class EventStreamFetcher {
 
 	private String extractCollectionName(Resource resource) {
 		if(resource.isIRI()) {
-			IRI iri = (IRI) resource;
+			final IRI iri = (IRI) resource;
 			return iri.getLocalName();
 		}
 		throw new IllegalStateException("Resource is not an IRI: " + resource);

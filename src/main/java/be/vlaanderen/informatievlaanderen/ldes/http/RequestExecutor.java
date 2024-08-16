@@ -9,6 +9,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UncheckedIOException;
+import java.util.Arrays;
 import java.util.List;
 
 @Component
@@ -22,6 +23,10 @@ public class RequestExecutor {
 
     public HttpEntity execute(Request request) {
         return execute(request, ACCEPTABLE_STATUS_CODES);
+    }
+
+    public HttpEntity execute(Request request, Integer... expectedStatusCodes) {
+        return execute(request, Arrays.asList(expectedStatusCodes));
     }
 
     public HttpEntity execute(Request request, List<Integer> expectedCodes) {

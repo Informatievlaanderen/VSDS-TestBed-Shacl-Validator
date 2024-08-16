@@ -25,11 +25,9 @@ public class TestBedNotifier {
 
 	private static final Logger LOG = LoggerFactory.getLogger(TestBedNotifier.class);
 	private final MessagingClients messagingClients;
-	private final Utils utils;
 
-	public TestBedNotifier(MessagingClients messagingClients, Utils utils) {
+	public TestBedNotifier(MessagingClients messagingClients) {
 		this.messagingClients = messagingClients;
-		this.utils = utils;
 	}
 
 
@@ -64,7 +62,7 @@ public class TestBedNotifier {
 			callTestBed(sessionId, callId, report, callback);
 		} catch (Exception e) {
 			LOG.warn("Error while notifying test bed for session [{}]", sessionId, e);
-			callTestBed(sessionId, callId, utils.createReport(TestResultType.FAILURE), callback);
+			callTestBed(sessionId, callId, Utils.createReport(TestResultType.FAILURE), callback);
 		}
 	}
 

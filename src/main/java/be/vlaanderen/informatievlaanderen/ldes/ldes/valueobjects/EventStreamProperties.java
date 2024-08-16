@@ -1,4 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.ldes.valueobjects;
 
-public record EventStreamProperties(String collectionName, String versionOfPath) {
+public record EventStreamProperties(
+		String ldesServerUrl,
+		String collectionName,
+		String versionOfPath
+) {
 }
