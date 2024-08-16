@@ -1,0 +1,53 @@
+@prefix by-location:      <http://localhost:8080/verkeersmetingen/by-location/> .
+@prefix by-page:          <http://localhost:8080/verkeersmetingen/by-page/> .
+@prefix by-time:          <http://localhost:8080/verkeersmetingen/by-time/> .
+@prefix dcat:             <http://www.w3.org/ns/dcat#> .
+@prefix ldes:             <https://w3id.org/ldes#> .
+@prefix prov:             <http://www.w3.org/ns/prov#> .
+@prefix rdf:              <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix shacl:            <http://www.w3.org/ns/shacl#> .
+@prefix terms:            <http://purl.org/dc/terms/> .
+@prefix tree:             <https://w3id.org/tree#> .
+@prefix verkeersmetingen: <http://localhost:8080/verkeersmetingen/> .
+
+<http://localhost:8080/verkeersmetingen>
+        rdf:type             dcat:Dataset , ldes:EventStream;
+        terms:conformsTo     <https://w3id.org/tree/specification> , <https://w3id.org/ldes/specification>;
+        terms:identifier     "http://localhost:8080/verkeersmetingen"^^<http://www.w3.org/2000/01/rdf-schema#Literal>;
+        ldes:createVersions  false;
+        ldes:eventSource     [ rdf:type  ldes:EventSource ];
+        ldes:timestampPath   prov:generatedAtTime;
+        ldes:versionOfPath   terms:isVersionOf;
+        tree:shape           [ rdf:type  shacl:NodeShape ];
+        tree:view            verkeersmetingen:by-page , verkeersmetingen:by-time .
+
+<https://w3id.org/tree/specification>
+        rdf:type  terms:Standard .
+
+by-page:description  rdf:type       tree:ViewDescription;
+        ldes:retentionPolicy        [ ];
+        tree:fragmentationStrategy  ();
+        tree:pageSize               "250"^^<http://www.w3.org/2001/XMLSchema#int> .
+
+
+by-time:description  rdf:type       tree:ViewDescription;
+        ldes:retentionPolicy        [ rdf:type    ldes:DurationAgoPolicy;
+                                      tree:value  "P5Y"^^<http://www.w3.org/2001/XMLSchema#duration>
+                                    ];
+        tree:fragmentationStrategy  ( [ rdf:type                tree:HierarchicalTimeBasedFragmentation;
+                                        tree:fragmentationPath  "http://www.w3.org/ns/prov#generatedAtTime";
+                                        tree:maxGranularity     "hour"
+                                      ]
+                                    );
+        tree:pageSize               "250"^^<http://www.w3.org/2001/XMLSchema#int> .
+
+verkeersmetingen:by-time
+        rdf:type              tree:Node;
+        tree:viewDescription  by-time:description .
+
+verkeersmetingen:by-page
+        rdf:type              tree:Node;
+        tree:viewDescription  by-page:description .
+
+<https://w3id.org/ldes/specification>
+        rdf:type  terms:Standard .

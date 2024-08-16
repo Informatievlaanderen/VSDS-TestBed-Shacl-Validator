@@ -1,6 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.gitb;
 
-import com.gitb.tr.ObjectFactory;
 import org.apache.cxf.Bus;
 import org.apache.cxf.jaxws.EndpointImpl;
 import org.springframework.context.annotation.Bean;
@@ -54,16 +53,6 @@ public class ServiceConfig {
         endpoint.setEndpointName(new QName("http://www.gitb.com/vs/v1/", "ValidationServicePort"));
         endpoint.publish("/validation");
         return endpoint;
-    }
-
-    /**
-     * The ObjectFactory used to construct GITB classes.
-     *
-     * @return The factory.
-     */
-    @Bean
-    public ObjectFactory objectFactory() {
-        return new ObjectFactory();
     }
 
 }

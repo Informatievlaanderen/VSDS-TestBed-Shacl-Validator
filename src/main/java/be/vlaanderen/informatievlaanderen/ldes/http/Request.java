@@ -28,8 +28,13 @@ public class Request {
         this.contentType = contentType;
     }
 
+    public Request(String url, RequestMethod method, ContentType contentType) {
+        this(url, "", method, contentType);
+    }
+
+
     public Request(String url, RequestMethod method) {
-        this(url, "", method, ContentType.DEFAULT_TEXT);
+        this(url, method, ContentType.DEFAULT_TEXT);
     }
 
     public HttpRequestBase createRequest() {

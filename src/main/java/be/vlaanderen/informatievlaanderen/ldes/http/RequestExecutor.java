@@ -3,7 +3,6 @@ package be.vlaanderen.informatievlaanderen.ldes.http;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
@@ -17,9 +16,8 @@ public class RequestExecutor {
     private static final List<Integer> ACCEPTABLE_STATUS_CODES = List.of(200, 201);
     private final HttpClient httpClient;
 
-    public RequestExecutor() {
-        final HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
-        this.httpClient = httpClientBuilder.build();
+    public RequestExecutor(HttpClient httpClient) {
+	    this.httpClient = httpClient;
     }
 
     public HttpEntity execute(Request request) {
