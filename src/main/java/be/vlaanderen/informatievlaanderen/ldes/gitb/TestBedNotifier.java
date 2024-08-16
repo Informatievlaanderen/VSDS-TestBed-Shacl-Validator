@@ -65,7 +65,6 @@ public class TestBedNotifier {
 		} catch (Exception e) {
 			LOG.warn("Error while notifying test bed for session [{}]", sessionId, e);
 			callTestBed(sessionId, callId, utils.createReport(TestResultType.FAILURE), callback);
-			throw new IllegalStateException(e);
 		}
 	}
 
