@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.http;
 
+import be.vlaanderen.informatievlaanderen.ldes.http.requests.HttpRequest;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -21,15 +22,15 @@ public class RequestExecutor {
 	    this.httpClient = httpClient;
     }
 
-    public HttpEntity execute(Request request) {
+    public HttpEntity execute(HttpRequest request) {
         return execute(request, ACCEPTABLE_STATUS_CODES);
     }
 
-    public HttpEntity execute(Request request, Integer... expectedStatusCodes) {
+    public HttpEntity execute(HttpRequest request, Integer... expectedStatusCodes) {
         return execute(request, Arrays.asList(expectedStatusCodes));
     }
 
-    public HttpEntity execute(Request request, List<Integer> expectedCodes) {
+    public HttpEntity execute(HttpRequest request, List<Integer> expectedCodes) {
         try {
             HttpResponse response = httpClient.execute(request.createRequest());
             if (!expectedCodes.contains(response.getStatusLine().getStatusCode())) {

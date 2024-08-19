@@ -1,13 +1,12 @@
 package be.vlaanderen.informatievlaanderen.ldes.ldio;
 
-import be.vlaanderen.informatievlaanderen.ldes.http.Request;
 import be.vlaanderen.informatievlaanderen.ldes.http.RequestExecutor;
+import be.vlaanderen.informatievlaanderen.ldes.http.requests.GetRequest;
 import be.vlaanderen.informatievlaanderen.ldes.ldio.config.LdioConfigProperties;
 import be.vlaanderen.informatievlaanderen.ldes.ldio.valuebojects.ClientStatus;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
@@ -47,7 +46,7 @@ public class LdesClientStatusManager {
 
 	public ClientStatus getClientStatus() {
 		final String clientStatusUrl = ldioConfigProperties.getLdioLdesClientStatusUrl();
-		final HttpEntity response = requestExecutor.execute(new Request(clientStatusUrl, RequestMethod.GET));
+		final HttpEntity response = requestExecutor.execute(new GetRequest(clientStatusUrl));
 
 		final ObjectMapper objectMapper = new ObjectMapper();
 		try {

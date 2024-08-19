@@ -1,16 +1,14 @@
 package be.vlaanderen.informatievlaanderen.ldes.rdfrepo;
 
-import be.vlaanderen.informatievlaanderen.ldes.http.Request;
 import be.vlaanderen.informatievlaanderen.ldes.http.RequestExecutor;
+import be.vlaanderen.informatievlaanderen.ldes.http.requests.PostRequest;
 import be.vlaanderen.informatievlaanderen.ldes.services.RDFConverter;
 import org.eclipse.rdf4j.model.Model;
-import org.eclipse.rdf4j.model.impl.DynamicModelFactory;
+import org.eclipse.rdf4j.model.impl.LinkedHashModel;
 import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.RepositoryConnection;
 import org.eclipse.rdf4j.rio.RDFFormat;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 @Component
 public class RepositoryValidator {
@@ -31,11 +29,11 @@ public class RepositoryValidator {
         String repositoryId = repositoryManager.initRepo();
         Repository repository = repositoryManager.getRepo(repositoryId);
         try {
-            Model validationReport = new DynamicModelFactory().createEmptyModel();
-            requestExecutor.execute(new Request(
+            Model validationReport = new LinkedHashModel();
+            requestExecutor.execute(new PostRequest(
                     String.format(REPO_VALIDATION_URL_TEMPLATE, repoUrl, repositoryId),
-                    RDFConverter.writeModel(shaclShape, RDFFormat.TURTLE),
-                    RequestMethod.POST, CONTENT_TYPE.getName()));
+                    RDFConverter.writeModel(shaclShape, CONTENT_TYPE),
+                    CONTENT_TYPE.getName()));
 
 //            RepositoryConnection connection = repository.getConnection();
 //            connection.begin();
