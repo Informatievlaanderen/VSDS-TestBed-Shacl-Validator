@@ -13,24 +13,23 @@ public class StringContent {
 		this.content = content;
 	}
 
+	public boolean isBase64Encoded() {
+		return hasValueEmbeddingMethod(ValueEmbeddingEnumeration.BASE_64);
+	}
+
+	public boolean isUri() {
+		return hasValueEmbeddingMethod(ValueEmbeddingEnumeration.URI);
+	}
+
+	private boolean hasValueEmbeddingMethod(ValueEmbeddingEnumeration method) {
+		return content.getEmbeddingMethod() == method;
+	}
+
 	public String getString() {
-		if (content.getValue() == null) {
-			return null;
-		} else if (content.getEmbeddingMethod() == ValueEmbeddingEnumeration.BASE_64) {
+		if(isBase64Encoded()) {
 			return new String(Base64.getDecoder().decode(content.getValue()));
 		}
-//		else if (content.getEmbeddingMethod() == ValueEmbeddingEnumeration.URI) {
-//			final var response = new RequestExecutor().execute(new Request(content.getValue(), RequestMethod.GET));
-//			try {
-//				return EntityUtils.toString(response);
-//			} catch (IOException e) {
-//				throw new UncheckedIOException(e);
-//			}
-//		}
-		else {
-			return content.getValue();
-		}
-
+		return content.getValue();
 	}
 
 }

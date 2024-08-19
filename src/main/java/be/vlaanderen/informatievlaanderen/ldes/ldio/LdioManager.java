@@ -6,14 +6,14 @@ import be.vlaanderen.informatievlaanderen.ldes.http.RequestExecutor;
 import be.vlaanderen.informatievlaanderen.ldes.ldes.services.EventStreamFetcher;
 import be.vlaanderen.informatievlaanderen.ldes.ldes.valueobjects.EventStreamProperties;
 import be.vlaanderen.informatievlaanderen.ldes.ldio.config.LdioConfigProperties;
-import be.vlaanderen.informatievlaanderen.ldes.ldio.pipeline.ValidationPipelineFactory;
+import be.vlaanderen.informatievlaanderen.ldes.ldio.pipeline.ValidationPipelineSupplier;
 import org.apache.http.entity.ContentType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.io.IOException;
 
-import static be.vlaanderen.informatievlaanderen.ldes.ldio.pipeline.ValidationPipelineFactory.PIPELINE_NAME;
+import static be.vlaanderen.informatievlaanderen.ldes.ldio.pipeline.ValidationPipelineSupplier.PIPELINE_NAME;
 
 @Service
 public class LdioManager {
@@ -27,11 +27,10 @@ public class LdioManager {
 		this.ldioConfigProperties = ldioConfigProperties;
 	}
 
-
-	public void initPipeline(String serverUrl) throws IOException {
+	public void initPipeline(String serverUrl) {
 		final String ldioAdminPipelineUrl = ldioConfigProperties.getLdioAdminPipelineUrl();
 		final EventStreamProperties eventStreamProperties = eventStreamFetcher.fetchProperties(serverUrl);
-		final String json = new ValidationPipelineFactory(eventStreamProperties, ldioConfigProperties.getSparqlHost()).createValidationPipelineAsJson();
+		final String json = new ValidationPipelineSupplier(eventStreamProperties, ldioConfigProperties.getSparqlHost()).createValidationPipelineAsJson();
 		requestExecutor.execute(new Request(ldioAdminPipelineUrl, json, RequestMethod.POST, ContentType.APPLICATION_JSON), 201);
 	}
 

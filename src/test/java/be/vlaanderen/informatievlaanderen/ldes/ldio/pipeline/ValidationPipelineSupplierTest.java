@@ -10,14 +10,14 @@ import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class ValidationPipelineFactoryTest {
+class ValidationPipelineSupplierTest {
 	private static final String LDES_SERVER_URL = "http://test-server/test-collection";
 	private static final String SPARQL_HOST = "http://my-sparql-host.net";
 	private final ObjectMapper objectMapper = new ObjectMapper();
 
 	@Test
 	void test_createJson() throws IOException {
-		final ValidationPipelineFactory factory = new ValidationPipelineFactory(new EventStreamProperties(LDES_SERVER_URL, "test-collection", "http://purl.org/dc/terms/isVersionOf"), SPARQL_HOST);
+		final ValidationPipelineSupplier factory = new ValidationPipelineSupplier(new EventStreamProperties(LDES_SERVER_URL, "test-collection", "http://purl.org/dc/terms/isVersionOf"), SPARQL_HOST);
 		final JsonNode expectedJson = readJsonNode();
 
 		final String result = factory.createValidationPipelineAsJson();

@@ -7,13 +7,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.List;
 
-public class ValidationPipelineFactory {
+public class ValidationPipelineSupplier {
 	public static final String PIPELINE_NAME = "validation-pipeline";
 	private static final String PIPELINE_DESCRIPTION = "Pipeline that will only replicate an LDES for validation purposes";
 	private final EventStreamProperties eventStreamProperties;
 	private final String sparqlHost;
 
-	public ValidationPipelineFactory(EventStreamProperties eventStreamProperties, String sparqlHost) {
+	public ValidationPipelineSupplier(EventStreamProperties eventStreamProperties, String sparqlHost) {
 		this.eventStreamProperties = eventStreamProperties;
 		this.sparqlHost = sparqlHost;
 	}
@@ -33,9 +33,13 @@ public class ValidationPipelineFactory {
 		);
 	}
 
-	public String createValidationPipelineAsJson() throws JsonProcessingException {
+	public String createValidationPipelineAsJson() {
 		final LdioPipeline pipeline = createValidationPipeline();
 		final ObjectMapper objectMapper = new ObjectMapper();
-		return objectMapper.writeValueAsString(pipeline);
+		try{
+			return objectMapper.writeValueAsString(pipeline);
+		} catch (JsonProcessingException e) {
+			throw new IllegalStateException("Could not serialize pipeline to JSON", e);
+		}
 	}
 }
