@@ -15,4 +15,8 @@ public class LdioRepositorySinkBuilder extends LdioComponentBuilder<LdioReposito
 	public LdioRepositorySinkBuilder withRepositoryId(String repositoryId) {
 		return withProperty("repository-id", repositoryId);
 	}
+
+	public LdioRepositorySinkBuilder withBatchSize(int batchSize) {
+		return withProperty("batch-size", batchSize);
+	}
 }

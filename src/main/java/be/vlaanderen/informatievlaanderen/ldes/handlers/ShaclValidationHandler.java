@@ -4,6 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.ldio.LdesClientStatusManager;
 import be.vlaanderen.informatievlaanderen.ldes.ldio.LdioManager;
 import be.vlaanderen.informatievlaanderen.ldes.rdfrepo.RepositoryValidator;
 import be.vlaanderen.informatievlaanderen.ldes.valueobjects.ValidationReport;
+import jakarta.annotation.PreDestroy;
 import org.eclipse.rdf4j.model.Model;
 import org.springframework.stereotype.Component;
 
@@ -27,4 +28,8 @@ public class ShaclValidationHandler {
 
 	}
 
+	@PreDestroy
+	public void onShutdown() {
+		ldioManager.deletePipeline();
+	}
 }

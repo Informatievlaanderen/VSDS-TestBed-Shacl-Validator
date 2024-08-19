@@ -28,13 +28,13 @@ public class LdioManager {
 	public void initPipeline(String serverUrl) {
 		final String ldioAdminPipelineUrl = ldioConfigProperties.getLdioAdminPipelineUrl();
 		final EventStreamProperties eventStreamProperties = eventStreamFetcher.fetchProperties(serverUrl);
-		final String json = new ValidationPipelineSupplier(eventStreamProperties, ldioConfigProperties.getSparqlHost()).createValidationPipelineAsJson();
+		final String json = new ValidationPipelineSupplier(eventStreamProperties, ldioConfigProperties.getSparqlHost()).getValidationPipelineAsJson();
 		requestExecutor.execute(new PostRequest(ldioAdminPipelineUrl, json, ContentType.APPLICATION_JSON), 201);
 	}
 
 	public void deletePipeline() {
 		requestExecutor.execute(
-				new DeleteRequest(ldioConfigProperties.getLdioAdminPipelineUrl() + "/" + PIPELINE_NAME)
+				new DeleteRequest(ldioConfigProperties.getLdioAdminPipelineUrl() + "/" + PIPELINE_NAME), 202, 204
 		);
 	}
 

@@ -1,6 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.gitb.Utils;
 import be.vlaanderen.informatievlaanderen.ldes.valueobjects.ValidationReport;
 import be.vlaanderen.informatievlaanderen.ldes.valueobjects.severitylevels.SeverityLevel;
 import com.gitb.core.AnyContent;

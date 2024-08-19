@@ -20,7 +20,7 @@ class ValidationPipelineSupplierTest {
 		final ValidationPipelineSupplier factory = new ValidationPipelineSupplier(new EventStreamProperties(LDES_SERVER_URL, "test-collection", "http://purl.org/dc/terms/isVersionOf"), SPARQL_HOST);
 		final JsonNode expectedJson = readJsonNode();
 
-		final String result = factory.createValidationPipelineAsJson();
+		final String result = factory.getValidationPipelineAsJson();
 		final JsonNode actualJson = objectMapper.readTree(result);
 
 		assertThat(actualJson)

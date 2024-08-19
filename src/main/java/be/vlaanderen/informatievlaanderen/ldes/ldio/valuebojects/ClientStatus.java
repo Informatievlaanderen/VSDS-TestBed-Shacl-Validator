@@ -1,20 +1,14 @@
 package be.vlaanderen.informatievlaanderen.ldes.ldio.valuebojects;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+public enum ClientStatus {
 
-public record ClientStatus(@JsonProperty("pipeline") String pipelineName, Status status) {
-	public boolean isSuccessfullyReplicated() {
-		return status.equals(Status.SYNCHRONIZING) || status.equals(Status.COMPLETED);
+	REPLICATING,
+	SYNCHRONISING,
+	COMPLETED,
+	ERROR;
+
+	public static boolean isSuccessfullyReplicated(ClientStatus status) {
+		return status.equals(ClientStatus.SYNCHRONISING) || status.equals(ClientStatus.COMPLETED);
 	}
 
-	public boolean isReplicating() {
-		return status.equals(Status.REPLICATING);
-	}
-
-	public enum Status {
-		REPLICATING,
-		SYNCHRONIZING,
-		COMPLETED,
-		ERROR
-	}
 }

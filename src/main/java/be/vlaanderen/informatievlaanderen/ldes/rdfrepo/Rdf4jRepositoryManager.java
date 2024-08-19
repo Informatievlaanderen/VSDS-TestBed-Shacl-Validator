@@ -5,24 +5,26 @@ import org.eclipse.rdf4j.repository.config.RepositoryConfig;
 import org.eclipse.rdf4j.repository.http.config.HTTPRepositoryConfig;
 import org.eclipse.rdf4j.repository.manager.RepositoryManager;
 import org.eclipse.rdf4j.repository.manager.RepositoryProvider;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import static be.vlaanderen.informatievlaanderen.ldes.ldio.pipeline.ValidationPipelineSupplier.REPOSITORY_ID;
 
 @Component
 public class Rdf4jRepositoryManager {
-
-    private static final String repoIdBase = "validation";
-    private final String serverUrl = "http://localhost:8080/rdf4j-server";
+    private final String repoServerUrl;
     private final RepositoryManager repositoryManager;
 
-    public Rdf4jRepositoryManager() {
-        repositoryManager = RepositoryProvider.getRepositoryManager(serverUrl);
+    public Rdf4jRepositoryManager(@Value("${ldio.sparql-host}") String repoServerUrl) {
+	    this.repoServerUrl = repoServerUrl + "/rdf4j-server";
+	    repositoryManager = RepositoryProvider.getRepositoryManager(repoServerUrl);
         repositoryManager.init();
     }
 
     public String initRepo() {
-        String repoId = repositoryManager.getNewRepositoryID(repoIdBase);
-        new RepositoryConfig(repoId, new HTTPRepositoryConfig(serverUrl));
-        repositoryManager.addRepositoryConfig(new RepositoryConfig());
+        String repoId = repositoryManager.getNewRepositoryID(REPOSITORY_ID);
+        final RepositoryConfig repoConfig = new RepositoryConfig(repoId, new HTTPRepositoryConfig(repoServerUrl));
+        repositoryManager.addRepositoryConfig(repoConfig);
         return repoId;
     }
 

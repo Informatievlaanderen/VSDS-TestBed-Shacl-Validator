@@ -7,6 +7,7 @@ import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.impl.LinkedHashModel;
 import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.RepositoryConnection;
+import org.eclipse.rdf4j.repository.http.HTTPRepository;
 import org.eclipse.rdf4j.rio.RDFFormat;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +16,6 @@ public class RepositoryValidator {
 
     private static final String REPO_VALIDATION_URL_TEMPLATE = "%s/rest/repositories/%s/validate/text";
     private static final RDFFormat CONTENT_TYPE = RDFFormat.TURTLE;
-    private String repoUrl;
     private final Rdf4jRepositoryManager repositoryManager;
     private final RequestExecutor requestExecutor;
     private RepositoryConnection connection;
@@ -28,6 +28,7 @@ public class RepositoryValidator {
     public Model validate(Model shaclShape) {
         String repositoryId = repositoryManager.initRepo();
         Repository repository = repositoryManager.getRepo(repositoryId);
+        final String repoUrl = ((HTTPRepository) repository).getRepositoryURL();
         try {
             Model validationReport = new LinkedHashModel();
             requestExecutor.execute(new PostRequest(

@@ -32,6 +32,6 @@ public class LdioConfigProperties {
 	}
 
 	public String getLdioLdesClientStatusUrl() {
-		return "%s/ldes-client/%s/status".formatted(getLdioAdminPipelineUrl(), PIPELINE_NAME);
+		return "%s/ldes-client/%s".formatted(getLdioAdminPipelineUrl(), PIPELINE_NAME);
 	}
 }

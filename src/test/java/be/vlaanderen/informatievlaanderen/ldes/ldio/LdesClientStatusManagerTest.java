@@ -16,7 +16,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.io.ByteArrayInputStream;
 import java.time.Duration;
 
-import static be.vlaanderen.informatievlaanderen.ldes.ldio.pipeline.ValidationPipelineSupplier.PIPELINE_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 import static org.mockito.ArgumentMatchers.any;
@@ -38,9 +37,9 @@ class LdesClientStatusManagerTest {
 	@Test
 	void test_WaitUntilReplicated() {
 		when(requestExecutor.execute(any()))
-				.thenReturn(createResponse(ClientStatus.Status.REPLICATING))
-				.thenReturn(createResponse(ClientStatus.Status.REPLICATING))
-				.thenReturn(createResponse(ClientStatus.Status.SYNCHRONIZING));
+				.thenReturn(createResponse(ClientStatus.REPLICATING))
+				.thenReturn(createResponse(ClientStatus.REPLICATING))
+				.thenReturn(createResponse(ClientStatus.SYNCHRONISING));
 
 		ldesClientStatusManager.waitUntilReplicated();
 
@@ -51,28 +50,18 @@ class LdesClientStatusManagerTest {
 	}
 
 	@ParameterizedTest
-	@EnumSource(ClientStatus.Status.class)
-	void test_GetClientStatus(ClientStatus.Status status) {
-		final ClientStatus expectedClientStatus = new ClientStatus(PIPELINE_NAME, status);
+	@EnumSource(ClientStatus.class)
+	void test_GetClientStatus(ClientStatus status) {
 		when(requestExecutor.execute(any())).thenReturn(createResponse(status));
 
 		final ClientStatus actualStatus = ldesClientStatusManager.getClientStatus();
 
-		assertThat(expectedClientStatus).isEqualTo(actualStatus);
+		assertThat(actualStatus).isEqualTo(status);
 	}
 
-	private HttpEntity createResponse(ClientStatus.Status status) {
+	private HttpEntity createResponse(ClientStatus status) {
 		final BasicHttpEntity response = new BasicHttpEntity();
-		response.setContent(new ByteArrayInputStream(createJson(status).getBytes()));
+		response.setContent(new ByteArrayInputStream(('"' + status.toString() + '"').getBytes()));
 		return response;
-	}
-
-	private String createJson(ClientStatus.Status status) {
-		return """
-				{
-				"pipeline": "%s",
-				"status": "%s"
-				}
-				""".formatted(PIPELINE_NAME, status);
 	}
 }

@@ -8,7 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
 
 @EnableAutoConfiguration
-@SpringBootTest
+@SpringBootTest(properties = {"ldio.host=http://localhost:8383", "ldio.sparql-host=http://host.docker.internal:7200"})
 @ComponentScan(value = { "be.vlaanderen.informatievlaanderen.ldes" })
 class ShaclValidationHandlerTest {
     @Autowired
@@ -16,7 +16,8 @@ class ShaclValidationHandlerTest {
 
     @Test
     void test() {
-        validationHandler.validate("http://localhost:8082", new LinkedHashModel());
+        validationHandler.validate("http://host.docker.internal:8082/verkeersmetingen", new LinkedHashModel());
+        System.out.println("Finished validation");
     }
 
 }
