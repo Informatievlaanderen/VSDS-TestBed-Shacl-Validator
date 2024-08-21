@@ -8,6 +8,8 @@ import static be.vlaanderen.informatievlaanderen.ldes.ldio.pipeline.ValidationPi
 @Configuration
 @ConfigurationProperties(prefix = "ldio")
 public class LdioConfigProperties {
+	public static final String REPOSITORY_ID = "validation";
+
 	private String host;
 	private String sparqlHost;
 
@@ -33,5 +35,9 @@ public class LdioConfigProperties {
 
 	public String getLdioLdesClientStatusUrl() {
 		return "%s/ldes-client/%s".formatted(getLdioAdminPipelineUrl(), PIPELINE_NAME);
+	}
+
+	public String getRepositoryValidationUrl() {
+		return "%s/rest/repositories/%s/validate/text".formatted(sparqlHost, REPOSITORY_ID);
 	}
 }
