@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.gitb;
 
 import be.vlaanderen.informatievlaanderen.ldes.gitb.services.MessagingClients;
+import be.vlaanderen.informatievlaanderen.ldes.services.TarSupplier;
 import com.gitb.core.LogLevel;
 import com.gitb.ms.LogRequest;
 import com.gitb.ms.NotifyForMessageRequest;
@@ -62,7 +63,7 @@ public class TestBedNotifier {
 			callTestBed(sessionId, callId, report, callback);
 		} catch (Exception e) {
 			LOG.warn("Error while notifying test bed for session [{}]", sessionId, e);
-			callTestBed(sessionId, callId, Utils.createReport(TestResultType.FAILURE), callback);
+			callTestBed(sessionId, callId, new TarSupplier(TestResultType.FAILURE).get(), callback);
 		}
 	}
 

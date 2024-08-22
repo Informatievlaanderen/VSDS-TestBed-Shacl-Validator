@@ -2,16 +2,11 @@ package be.vlaanderen.informatievlaanderen.ldes.gitb;
 
 import com.gitb.core.AnyContent;
 import com.gitb.core.ValueEmbeddingEnumeration;
-import com.gitb.tr.TAR;
-import com.gitb.tr.TestResultType;
 import jakarta.xml.ws.WebServiceContext;
 import org.apache.cxf.headers.Header;
 import org.w3c.dom.Element;
 
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
 import javax.xml.namespace.QName;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
@@ -28,27 +23,9 @@ public class Utils {
 	 */
 	public static final QName TEST_SESSION_ID_QNAME = new QName("http://www.gitb.com", "TestSessionIdentifier", "gitb");
 
-	/**
-	 * Create a report for the given result.
-	 * <p>
-	 * This method creates the report, sets its time and constructs an empty context map to return values with.
-	 *
-	 * @param result The overall result of the report.
-	 * @return The report.
-	 */
-	public static TAR createReport(TestResultType result) {
-		TAR report = new TAR();
-		report.setContext(new AnyContent());
-		report.getContext().setType("map");
-		report.setResult(result);
-		try {
-			report.setDate(DatatypeFactory.newInstance().newXMLGregorianCalendar(new GregorianCalendar()));
-		} catch (DatatypeConfigurationException e) {
-			throw new IllegalStateException(e);
-		}
-		return report;
-	}
 
+	private Utils() {
+	}
 
 	/**
 	 * Create a AnyContent object value based on the provided parameters.

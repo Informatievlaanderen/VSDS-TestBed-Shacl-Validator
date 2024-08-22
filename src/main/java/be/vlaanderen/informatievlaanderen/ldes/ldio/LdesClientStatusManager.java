@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.ldio;
 import be.vlaanderen.informatievlaanderen.ldes.http.RequestExecutor;
 import be.vlaanderen.informatievlaanderen.ldes.http.requests.GetRequest;
 import be.vlaanderen.informatievlaanderen.ldes.ldio.config.LdioConfigProperties;
+import be.vlaanderen.informatievlaanderen.ldes.ldio.excpeptions.LdesClientStatusUnavailableException;
 import be.vlaanderen.informatievlaanderen.ldes.ldio.valuebojects.ClientStatus;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpEntity;
@@ -28,9 +29,12 @@ public class LdesClientStatusManager {
 	}
 
 	public void waitUntilReplicated() {
+		final int period = 5;
+		final TimeUnit timeUnit = TimeUnit.SECONDS;
 		final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 		final CountDownLatch countDownLatch = new CountDownLatch(1);
 
+		log.atInfo().log("Waiting for the LDES client to complete REPLICATING");
 		scheduler.scheduleAtFixedRate(() -> {
 			try {
 				final ClientStatus clientStatus = getClientStatus();
@@ -39,10 +43,12 @@ public class LdesClientStatusManager {
 					countDownLatch.countDown();
 					log.atInfo().log("LDES client status is now {}", clientStatus.toString());
 				}
+			} catch (LdesClientStatusUnavailableException e) {
+				log.atWarn().log("LDES client status is not available yet, trying again in {} {} ...", period, timeUnit.toString().toLowerCase());
 			} catch (Exception e) {
 				log.atError().log("Something went wrong while waiting for LDES client to be fully replicated", e);
 			}
-		}, 0, 5, TimeUnit.SECONDS);
+		}, 0, period, timeUnit);
 
 		try {
 			countDownLatch.await();
@@ -56,7 +62,11 @@ public class LdesClientStatusManager {
 
 	public ClientStatus getClientStatus() {
 		final String clientStatusUrl = ldioConfigProperties.getLdioLdesClientStatusUrl();
-		final HttpEntity response = requestExecutor.execute(new GetRequest(clientStatusUrl));
+		final HttpEntity response = requestExecutor.execute(new GetRequest(clientStatusUrl), 200, 404);
+
+		if (response.getContentLength() == 0) {
+			throw new LdesClientStatusUnavailableException();
+		}
 
 		final ObjectMapper objectMapper = new ObjectMapper();
 		try {

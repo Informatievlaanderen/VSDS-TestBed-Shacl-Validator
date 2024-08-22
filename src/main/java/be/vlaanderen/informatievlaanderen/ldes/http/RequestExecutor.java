@@ -4,11 +4,10 @@ import be.vlaanderen.informatievlaanderen.ldes.http.requests.HttpRequest;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.util.EntityUtils;
 import org.springframework.stereotype.Component;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.UncheckedIOException;
 import java.util.Arrays;
 import java.util.List;
@@ -34,8 +33,8 @@ public class RequestExecutor {
         try {
             HttpResponse response = httpClient.execute(request.createRequest());
             if (!expectedCodes.contains(response.getStatusLine().getStatusCode())) {
-                String msg = new BufferedReader(new InputStreamReader(response.getEntity().getContent())).readLine();
-                throw new RuntimeException(msg);
+                final String message = EntityUtils.toString(response.getEntity());
+                throw new IllegalStateException("Unexpected response status: " + response.getStatusLine().getStatusCode() + ":\n" + message);
             }
 
             return response.getEntity();

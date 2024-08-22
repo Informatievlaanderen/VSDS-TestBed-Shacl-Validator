@@ -9,12 +9,15 @@ import be.vlaanderen.informatievlaanderen.ldes.ldes.valueobjects.EventStreamProp
 import be.vlaanderen.informatievlaanderen.ldes.ldio.config.LdioConfigProperties;
 import be.vlaanderen.informatievlaanderen.ldes.ldio.pipeline.ValidationPipelineSupplier;
 import org.apache.http.entity.ContentType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import static be.vlaanderen.informatievlaanderen.ldes.ldio.pipeline.ValidationPipelineSupplier.PIPELINE_NAME;
 
 @Service
 public class LdioManager {
+	private static final Logger log = LoggerFactory.getLogger(LdioManager.class);
 	private final EventStreamFetcher eventStreamFetcher;
 	private final RequestExecutor requestExecutor;
 	private final LdioConfigProperties ldioConfigProperties;
@@ -30,12 +33,14 @@ public class LdioManager {
 		final EventStreamProperties eventStreamProperties = eventStreamFetcher.fetchProperties(serverUrl);
 		final String json = new ValidationPipelineSupplier(eventStreamProperties, ldioConfigProperties.getSparqlHost()).getValidationPipelineAsJson();
 		requestExecutor.execute(new PostRequest(ldioAdminPipelineUrl, json, ContentType.APPLICATION_JSON), 201);
+		log.atInfo().log("LDIO pipeline created: {}", PIPELINE_NAME);
 	}
 
 	public void deletePipeline() {
 		requestExecutor.execute(
 				new DeleteRequest(ldioConfigProperties.getLdioAdminPipelineUrl() + "/" + PIPELINE_NAME), 202, 204
 		);
+		log.atInfo().log("LDIO pipeline deleted: {}", PIPELINE_NAME);
 	}
 
 }

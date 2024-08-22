@@ -1,10 +1,10 @@
 package be.vlaanderen.informatievlaanderen.ldes.gitb;
 
+import be.vlaanderen.informatievlaanderen.ldes.services.TarSupplier;
 import be.vlaanderen.informatievlaanderen.ldes.valueobjects.Parameters;
 import com.gitb.core.ValueEmbeddingEnumeration;
 import com.gitb.ps.Void;
 import com.gitb.ps.*;
-import com.gitb.tr.TestResultType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -49,7 +49,7 @@ public class ProcessingServiceImpl implements ProcessingService {
     public ProcessResponse process(ProcessRequest processRequest) {
         LOG.info("Received 'process' command from test bed for session [{}]", processRequest.getSessionId());
         ProcessResponse response = new ProcessResponse();
-        response.setReport(Utils.createReport(TestResultType.SUCCESS));
+        response.setReport(TarSupplier.success());
         String operation = processRequest.getOperation();
         if (operation == null) {
             throw new IllegalArgumentException("No processing operation provided");

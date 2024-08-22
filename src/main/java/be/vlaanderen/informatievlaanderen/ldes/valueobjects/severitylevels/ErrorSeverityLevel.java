@@ -1,19 +1,20 @@
 package be.vlaanderen.informatievlaanderen.ldes.valueobjects.severitylevels;
 
 import be.vlaanderen.informatievlaanderen.ldes.constants.RDFConstants;
+import be.vlaanderen.informatievlaanderen.ldes.services.TarSupplier;
 import com.gitb.tr.TAR;
-import com.gitb.tr.TestAssertionGroupReportsType;
 import com.gitb.tr.TestAssertionReportType;
 import com.gitb.tr.TestResultType;
 import jakarta.xml.bind.JAXBElement;
 import org.eclipse.rdf4j.model.IRI;
 
-import static be.vlaanderen.informatievlaanderen.ldes.constants.RDFConstants.VIOLATION;
-
 public class ErrorSeverityLevel implements SeverityLevel {
+	ErrorSeverityLevel() {
+	}
+
 	@Override
 	public IRI getIri() {
-		return VIOLATION;
+		return RDFConstants.VIOLATION;
 	}
 
 	@Override
@@ -22,7 +23,7 @@ public class ErrorSeverityLevel implements SeverityLevel {
 	}
 
 	@Override
-	public void setResult(TAR report) {
-		report.setResult(TestResultType.FAILURE);
+	public TAR createTarReport() {
+		return new TarSupplier(TestResultType.FAILURE).get();
 	}
 }

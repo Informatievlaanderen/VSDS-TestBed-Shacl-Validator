@@ -34,7 +34,7 @@ class ShaclValidationHandlerTest {
 		shaclValidationHandler.validate(LDES_SERVER_URL, new LinkedHashModel());
 
 		final InOrder inOrder = inOrder(ldioManager, ldesClientStatusManager, repositoryManager, repositoryValidator);
-		inOrder.verify(repositoryManager).initRepository();
+		inOrder.verify(repositoryManager).createRepository();
 		inOrder.verify(ldioManager).initPipeline(LDES_SERVER_URL);
 		inOrder.verify(ldesClientStatusManager).waitUntilReplicated();
 		inOrder.verify(ldioManager).deletePipeline();

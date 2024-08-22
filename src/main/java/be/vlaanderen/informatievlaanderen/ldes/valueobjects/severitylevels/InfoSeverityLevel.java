@@ -1,16 +1,19 @@
 package be.vlaanderen.informatievlaanderen.ldes.valueobjects.severitylevels;
 
+import be.vlaanderen.informatievlaanderen.ldes.constants.RDFConstants;
+import be.vlaanderen.informatievlaanderen.ldes.services.TarSupplier;
 import com.gitb.tr.TAR;
 import com.gitb.tr.TestAssertionReportType;
 import jakarta.xml.bind.JAXBElement;
 import org.eclipse.rdf4j.model.IRI;
 
-import static be.vlaanderen.informatievlaanderen.ldes.constants.RDFConstants.INFO;
-
 public class InfoSeverityLevel implements SeverityLevel {
+	InfoSeverityLevel() {
+	}
+
 	@Override
 	public IRI getIri() {
-		return INFO;
+		return RDFConstants.INFO;
 	}
 
 	@Override
@@ -19,7 +22,7 @@ public class InfoSeverityLevel implements SeverityLevel {
 	}
 
 	@Override
-	public void setResult(TAR report) {
-		// No result should be set on info severity level
+	public TAR createTarReport() {
+		return TarSupplier.success();
 	}
 }

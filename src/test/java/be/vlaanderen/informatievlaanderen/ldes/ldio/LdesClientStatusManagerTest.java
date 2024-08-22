@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.ldio;
 
 import be.vlaanderen.informatievlaanderen.ldes.http.RequestExecutor;
 import be.vlaanderen.informatievlaanderen.ldes.ldio.config.LdioConfigProperties;
+import be.vlaanderen.informatievlaanderen.ldes.ldio.excpeptions.LdesClientStatusUnavailableException;
 import be.vlaanderen.informatievlaanderen.ldes.ldio.valuebojects.ClientStatus;
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.BasicHttpEntity;
@@ -17,12 +18,14 @@ import java.io.ByteArrayInputStream;
 import java.time.Duration;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.awaitility.Awaitility.await;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class LdesClientStatusManagerTest {
+	private final Integer[] expectedStatusCodes = {200, 404};
 	@Mock
 	private RequestExecutor requestExecutor;
 	private LdesClientStatusManager ldesClientStatusManager;
@@ -36,7 +39,7 @@ class LdesClientStatusManagerTest {
 
 	@Test
 	void test_WaitUntilReplicated() {
-		when(requestExecutor.execute(any()))
+		when(requestExecutor.execute(any(), eq(expectedStatusCodes)))
 				.thenReturn(createResponse(ClientStatus.REPLICATING))
 				.thenReturn(createResponse(ClientStatus.REPLICATING))
 				.thenReturn(createResponse(ClientStatus.SYNCHRONISING));
@@ -45,14 +48,25 @@ class LdesClientStatusManagerTest {
 
 		await()
 				.atMost(Duration.ofSeconds(10))
-				.untilAsserted(() -> verify(requestExecutor, times(3)).execute(any()));
+				.untilAsserted(() -> verify(requestExecutor, times(3)).execute(any(), eq(expectedStatusCodes)));
 
+	}
+
+	@Test
+	void when_ClientStatusCannotBeFound_then_ThrowException() {
+		final BasicHttpEntity response = new BasicHttpEntity();
+		response.setContentLength(0);
+		when(requestExecutor.execute(any(), eq(expectedStatusCodes))).thenReturn(response);
+
+		assertThatThrownBy(ldesClientStatusManager::getClientStatus)
+				.isInstanceOf(LdesClientStatusUnavailableException.class)
+				.hasMessage("Ldes client status not available yet, try again later.");
 	}
 
 	@ParameterizedTest
 	@EnumSource(ClientStatus.class)
 	void test_GetClientStatus(ClientStatus status) {
-		when(requestExecutor.execute(any())).thenReturn(createResponse(status));
+		when(requestExecutor.execute(any(), eq(expectedStatusCodes))).thenReturn(createResponse(status));
 
 		final ClientStatus actualStatus = ldesClientStatusManager.getClientStatus();
 

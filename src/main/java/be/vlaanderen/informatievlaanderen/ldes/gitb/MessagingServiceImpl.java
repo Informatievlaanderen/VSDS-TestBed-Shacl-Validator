@@ -1,9 +1,9 @@
 package be.vlaanderen.informatievlaanderen.ldes.gitb;
 
+import be.vlaanderen.informatievlaanderen.ldes.services.TarSupplier;
 import be.vlaanderen.informatievlaanderen.ldes.valueobjects.Parameters;
 import com.gitb.ms.Void;
 import com.gitb.ms.*;
-import com.gitb.tr.TestResultType;
 import jakarta.annotation.Resource;
 import jakarta.xml.ws.WebServiceContext;
 import org.slf4j.Logger;
@@ -116,7 +116,7 @@ public class MessagingServiceImpl implements MessagingService {
 		String messageToSend = new Parameters(parameters.getInput()).getString("messageToSend");
 		LOG.info("The message to send is [{}]", messageToSend);
 		SendResponse response = new SendResponse();
-		response.setReport(Utils.createReport(TestResultType.SUCCESS));
+		response.setReport(TarSupplier.success());
 		return response;
 	}
 

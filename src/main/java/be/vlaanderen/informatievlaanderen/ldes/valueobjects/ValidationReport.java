@@ -1,9 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.valueobjects;
 
-import be.vlaanderen.informatievlaanderen.ldes.valueobjects.severitylevels.ErrorSeverityLevel;
-import be.vlaanderen.informatievlaanderen.ldes.valueobjects.severitylevels.InfoSeverityLevel;
-import be.vlaanderen.informatievlaanderen.ldes.valueobjects.severitylevels.SeverityLevel;
-import be.vlaanderen.informatievlaanderen.ldes.valueobjects.severitylevels.WarningSeverityLevel;
+import be.vlaanderen.informatievlaanderen.ldes.valueobjects.severitylevels.*;
 import com.google.common.collect.Iterables;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
@@ -31,13 +28,13 @@ public record ValidationReport(Model shaclReport) {
 
 	public SeverityLevel getHighestSeverityLevel() {
 		return Stream
-				.of(new ErrorSeverityLevel(), new WarningSeverityLevel(), new InfoSeverityLevel())
+				.of(SeverityLevels.ERROR, SeverityLevels.WARNING, SeverityLevels.INFO)
 				.collect(Collectors.toMap(Function.identity(), severityLevel -> getCountFor(severityLevel.getIri())))
 				.entrySet().stream()
 				.filter(entry -> entry.getValue() > 0)
 				.findFirst()
 				.map(Map.Entry::getKey)
-				.orElse(new InfoSeverityLevel());
+				.orElse(SeverityLevels.INFO);
 	}
 
 	private int getCountFor(IRI severity) {

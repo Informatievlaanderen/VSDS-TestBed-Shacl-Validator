@@ -3,9 +3,9 @@ package be.vlaanderen.informatievlaanderen.ldes.web;
 import be.vlaanderen.informatievlaanderen.ldes.gitb.StateManager;
 import be.vlaanderen.informatievlaanderen.ldes.gitb.TestBedNotifier;
 import be.vlaanderen.informatievlaanderen.ldes.gitb.Utils;
+import be.vlaanderen.informatievlaanderen.ldes.services.TarSupplier;
 import com.gitb.core.ValueEmbeddingEnumeration;
 import com.gitb.tr.TAR;
-import com.gitb.tr.TestResultType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -65,7 +65,7 @@ public class UserInputController {
             sessionIds.add(session);
         }
         // Input for the test bed is provided by means of a report.
-        TAR notificationReport = Utils.createReport(TestResultType.SUCCESS);
+        TAR notificationReport = TarSupplier.success();
         // The report can include any properties and with any nesting (by nesting list of map types). In this case we add a simple string.
         notificationReport.getContext().getItem().add(Utils.createAnyContentSimple("messageReceived", message, ValueEmbeddingEnumeration.STRING));
         for (String sessionId: sessionIds) {

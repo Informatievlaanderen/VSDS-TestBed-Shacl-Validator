@@ -12,5 +12,5 @@ public interface SeverityLevel {
 
 	JAXBElement<TestAssertionReportType> mapToJaxbElement(TestAssertionReportType testAssertionReportType);
 
-	void setResult(TAR report);
+	TAR createTarReport();
 }

@@ -24,12 +24,13 @@ public class ShaclValidationHandler {
 	}
 
 	public ValidationReport validate(String ldesServerURl, Model shaclShape) {
-		repositoryManager.initRepository();
+		repositoryManager.createRepository();
 		ldioManager.initPipeline(ldesServerURl);
 		clientStatusManager.waitUntilReplicated();
 		ldioManager.deletePipeline();
-		return new ValidationReport(validator.validate(shaclShape));
-
+		final Model shaclValidationReport = validator.validate(shaclShape);
+		repositoryManager.deleteRepository();
+		return new ValidationReport(shaclValidationReport);
 	}
 
 	@PreDestroy
