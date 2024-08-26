@@ -19,7 +19,6 @@ import java.time.Duration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.awaitility.Awaitility.await;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -46,9 +45,7 @@ class LdesClientStatusManagerTest {
 
 		ldesClientStatusManager.waitUntilReplicated();
 
-		await()
-				.atMost(Duration.ofSeconds(10))
-				.untilAsserted(() -> verify(requestExecutor, times(3)).execute(any(), eq(expectedStatusCodes)));
+		verify(requestExecutor, timeout(10000)).execute(any(), eq(expectedStatusCodes));
 
 	}
 
@@ -60,7 +57,7 @@ class LdesClientStatusManagerTest {
 
 		assertThatThrownBy(ldesClientStatusManager::getClientStatus)
 				.isInstanceOf(LdesClientStatusUnavailableException.class)
-				.hasMessage("Ldes client status not available yet, try again later.");
+				.hasMessage("Ldes client status not available.");
 	}
 
 	@ParameterizedTest

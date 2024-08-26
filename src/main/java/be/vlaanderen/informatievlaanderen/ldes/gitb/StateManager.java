@@ -22,8 +22,6 @@ import java.util.UUID;
 @Component
 public class StateManager {
 
-    /** Logger. */
-    private static final Logger LOG = LoggerFactory.getLogger(StateManager.class);
 
     /** The map of in-memory active sessions. */
     private final Map<String, Map<String, Object>> sessions = new HashMap<>();

@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.handlers;
 
 import be.vlaanderen.informatievlaanderen.ldes.ldio.LdesClientStatusManager;
-import be.vlaanderen.informatievlaanderen.ldes.ldio.LdioManager;
+import be.vlaanderen.informatievlaanderen.ldes.ldio.LdioPipelineManager;
 import be.vlaanderen.informatievlaanderen.ldes.rdfrepo.Rdf4jRepositoryManager;
 import be.vlaanderen.informatievlaanderen.ldes.rdfrepo.RepositoryValidator;
 import be.vlaanderen.informatievlaanderen.ldes.valueobjects.ValidationReport;
@@ -11,13 +11,13 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ShaclValidationHandler {
-	private final LdioManager ldioManager;
+	private final LdioPipelineManager ldioPipelineManager;
 	private final LdesClientStatusManager clientStatusManager;
 	private final Rdf4jRepositoryManager repositoryManager;
 	private final RepositoryValidator validator;
 
-	public ShaclValidationHandler(LdioManager ldioManager, LdesClientStatusManager clientStatusManager, Rdf4jRepositoryManager repositoryManager, RepositoryValidator validator) {
-		this.ldioManager = ldioManager;
+	public ShaclValidationHandler(LdioPipelineManager ldioPipelineManager, LdesClientStatusManager clientStatusManager, Rdf4jRepositoryManager repositoryManager, RepositoryValidator validator) {
+		this.ldioPipelineManager = ldioPipelineManager;
 		this.clientStatusManager = clientStatusManager;
 		this.repositoryManager = repositoryManager;
 		this.validator = validator;
@@ -25,9 +25,9 @@ public class ShaclValidationHandler {
 
 	public ValidationReport validate(String ldesServerURl, Model shaclShape) {
 		repositoryManager.createRepository();
-		ldioManager.initPipeline(ldesServerURl);
+		ldioPipelineManager.initPipeline(ldesServerURl);
 		clientStatusManager.waitUntilReplicated();
-		ldioManager.deletePipeline();
+		ldioPipelineManager.deletePipeline();
 		final Model shaclValidationReport = validator.validate(shaclShape);
 		repositoryManager.deleteRepository();
 		return new ValidationReport(shaclValidationReport);
@@ -35,6 +35,6 @@ public class ShaclValidationHandler {
 
 	@PreDestroy
 	public void onShutdown() {
-		ldioManager.deletePipeline();
+		ldioPipelineManager.deletePipeline();
 	}
 }

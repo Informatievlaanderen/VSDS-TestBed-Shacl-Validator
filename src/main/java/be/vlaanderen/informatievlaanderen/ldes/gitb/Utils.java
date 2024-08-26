@@ -28,23 +28,6 @@ public class Utils {
 	}
 
 	/**
-	 * Create a AnyContent object value based on the provided parameters.
-	 *
-	 * @param name            The name of the value.
-	 * @param value           The value itself.
-	 * @param embeddingMethod The way in which this value is to be considered.
-	 * @return The value.
-	 */
-	public static AnyContent createAnyContentSimple(String name, String value, ValueEmbeddingEnumeration embeddingMethod) {
-		AnyContent input = new AnyContent();
-		input.setName(name);
-		input.setValue(value);
-		input.setType("string");
-		input.setEmbeddingMethod(embeddingMethod);
-		return input;
-	}
-
-	/**
 	 * Parse the received SOAP headers to retrieve the "reply-to" address.
 	 *
 	 * @param context The call's context.

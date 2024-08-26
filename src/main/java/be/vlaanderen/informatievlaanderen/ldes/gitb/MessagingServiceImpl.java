@@ -16,9 +16,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class MessagingServiceImpl implements MessagingService {
 
-	/**
-	 * Logger.
-	 */
 	private static final Logger LOG = LoggerFactory.getLogger(MessagingServiceImpl.class);
 
 	private final StateManager stateManager;

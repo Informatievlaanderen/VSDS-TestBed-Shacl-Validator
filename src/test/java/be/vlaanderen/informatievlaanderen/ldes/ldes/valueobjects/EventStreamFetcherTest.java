@@ -25,7 +25,7 @@ class EventStreamFetcherTest {
 
 	@Test
 	void test_FetchEventStream() throws IOException {
-		final EventStreamProperties expected = new EventStreamProperties("http://test.com", "verkeersmetingen", "http://purl.org/dc/terms/isVersionOf");
+		final EventStreamProperties expected = new EventStreamProperties("http://test.com", "http://purl.org/dc/terms/isVersionOf");
 		final BasicHttpEntity httpEntity = new BasicHttpEntity();
 		httpEntity.setContent(new FileInputStream("src/test/resources/event-stream.ttl"));
 		when(requestExecutor.execute(any())).thenReturn(httpEntity);

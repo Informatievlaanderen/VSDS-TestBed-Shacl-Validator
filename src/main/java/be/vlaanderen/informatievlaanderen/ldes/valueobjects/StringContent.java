@@ -32,4 +32,29 @@ public class StringContent {
 		return content.getValue();
 	}
 
+	public static class Builder {
+		private final AnyContent content;
+
+		public Builder() {
+			content = new AnyContent();
+			content.setType("string");
+			content.setEmbeddingMethod(ValueEmbeddingEnumeration.STRING);
+		}
+
+		public Builder withStringValue(String value) {
+			content.setValue(value);
+			return this;
+		}
+
+		public Builder withName(String name) {
+			content.setName(name);
+			return this;
+		}
+
+
+		public AnyContent buildContent() {
+			return content;
+		}
+	}
+
 }

@@ -2,7 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.gitb;
 
 import be.vlaanderen.informatievlaanderen.ldes.services.TarSupplier;
 import be.vlaanderen.informatievlaanderen.ldes.valueobjects.Parameters;
-import com.gitb.core.ValueEmbeddingEnumeration;
+import be.vlaanderen.informatievlaanderen.ldes.valueobjects.StringContent;
 import com.gitb.ps.Void;
 import com.gitb.ps.*;
 import org.slf4j.Logger;
@@ -60,7 +60,7 @@ public class ProcessingServiceImpl implements ProcessingService {
             case "lowercase" -> input.toLowerCase();
             default -> throw new IllegalArgumentException(String.format("Unexpected operation [%s].", operation));
         };
-        response.getOutput().add(Utils.createAnyContentSimple("output", result, ValueEmbeddingEnumeration.STRING));
+        response.getOutput().add(new StringContent.Builder().withName("output").withStringValue(result).buildContent());
         LOG.info("Completed operation [{}]. Input was [{}], output was [{}].", operation, input, result);
         return response;
     }

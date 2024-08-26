@@ -1,14 +1,15 @@
 package be.vlaanderen.informatievlaanderen.ldes.valueobjects;
 
-import be.vlaanderen.informatievlaanderen.ldes.valueobjects.severitylevels.*;
+import be.vlaanderen.informatievlaanderen.ldes.valueobjects.severitylevels.SeverityLevel;
+import be.vlaanderen.informatievlaanderen.ldes.valueobjects.severitylevels.SeverityLevels;
 import com.google.common.collect.Iterables;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static be.vlaanderen.informatievlaanderen.ldes.constants.RDFConstants.*;
 
@@ -27,8 +28,7 @@ public record ValidationReport(Model shaclReport) {
 	}
 
 	public SeverityLevel getHighestSeverityLevel() {
-		return Stream
-				.of(SeverityLevels.ERROR, SeverityLevels.WARNING, SeverityLevels.INFO)
+		return Arrays.stream(SeverityLevels.all())
 				.collect(Collectors.toMap(Function.identity(), severityLevel -> getCountFor(severityLevel.getIri())))
 				.entrySet().stream()
 				.filter(entry -> entry.getValue() > 0)

@@ -5,6 +5,9 @@ import be.vlaanderen.informatievlaanderen.ldes.services.RDFConverter;
 import be.vlaanderen.informatievlaanderen.ldes.services.ValidationReportToTarMapper;
 import be.vlaanderen.informatievlaanderen.ldes.valueobjects.Parameters;
 import be.vlaanderen.informatievlaanderen.ldes.valueobjects.ValidationReport;
+import com.gitb.core.Metadata;
+import com.gitb.core.TypedParameter;
+import com.gitb.core.TypedParameters;
 import com.gitb.core.ValidationModule;
 import com.gitb.vs.Void;
 import com.gitb.vs.*;
@@ -14,6 +17,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 /**
  * Spring component that realises the validation service.
  */
@@ -21,7 +26,7 @@ import org.springframework.stereotype.Component;
 public class ValidationServiceImpl implements ValidationService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ValidationServiceImpl.class);
-	private static final String SERVICE_NAME = "LdesmemberShaclValidator";
+	private static final String SERVICE_NAME = "LdesMemberShaclValidator";
 
 	private final ShaclValidationHandler shaclValidationHandler;
 
@@ -39,6 +44,33 @@ public class ValidationServiceImpl implements ValidationService {
 	 * @param parameters No parameters are expected.
 	 * @return The response.
 	 */
+//	@Override
+//	public GetModuleDefinitionResponse getModuleDefinition(Void parameters) {
+//		final var validationModule = new ValidationModule();
+//		validationModule.setId(SERVICE_NAME);
+//		validationModule.setOperation("V");
+//
+//		final var metadata = new Metadata();
+//		metadata.setName(SERVICE_NAME);
+//		validationModule.setMetadata(metadata);
+//
+//		final var ldesServerParam = new TypedParameter();
+//		ldesServerParam.setName("server-url");
+//		ldesServerParam.setType("string");
+//
+//		final var shaclShapeParam = new TypedParameter();
+//		shaclShapeParam.setName("shacl-shape");
+//		shaclShapeParam.setType("string");
+//
+//		final var inputs = new TypedParameters();
+//		inputs.getParam().addAll(List.of(ldesServerParam, shaclShapeParam));
+//		validationModule.setInputs(inputs);
+//
+//		GetModuleDefinitionResponse response = new GetModuleDefinitionResponse();
+//		response.setModule(validationModule);
+//		return response;
+//	}
+
 	@Override
 	public GetModuleDefinitionResponse getModuleDefinition(Void parameters) {
 		GetModuleDefinitionResponse response = new GetModuleDefinitionResponse();

@@ -17,7 +17,7 @@ class ValidationPipelineSupplierTest {
 
 	@Test
 	void test_createJson() throws IOException {
-		final ValidationPipelineSupplier factory = new ValidationPipelineSupplier(new EventStreamProperties(LDES_SERVER_URL, "test-collection", "http://purl.org/dc/terms/isVersionOf"), SPARQL_HOST);
+		final ValidationPipelineSupplier factory = new ValidationPipelineSupplier(new EventStreamProperties(LDES_SERVER_URL, "http://purl.org/dc/terms/isVersionOf"), SPARQL_HOST);
 		final JsonNode expectedJson = readJsonNode();
 
 		final String result = factory.getValidationPipelineAsJson();

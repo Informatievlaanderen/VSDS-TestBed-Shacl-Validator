@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.handlers;
 
 import be.vlaanderen.informatievlaanderen.ldes.ldio.LdesClientStatusManager;
-import be.vlaanderen.informatievlaanderen.ldes.ldio.LdioManager;
+import be.vlaanderen.informatievlaanderen.ldes.ldio.LdioPipelineManager;
 import be.vlaanderen.informatievlaanderen.ldes.rdfrepo.Rdf4jRepositoryManager;
 import be.vlaanderen.informatievlaanderen.ldes.rdfrepo.RepositoryValidator;
 import org.eclipse.rdf4j.model.impl.LinkedHashModel;
@@ -20,7 +20,7 @@ class ShaclValidationHandlerTest {
 	@Mock
 	private Rdf4jRepositoryManager repositoryManager;
 	@Mock
-	private LdioManager ldioManager;
+	private LdioPipelineManager ldioPipelineManager;
 	@Mock
 	private LdesClientStatusManager ldesClientStatusManager;
 	@Mock
@@ -33,11 +33,11 @@ class ShaclValidationHandlerTest {
 	void test() {
 		shaclValidationHandler.validate(LDES_SERVER_URL, new LinkedHashModel());
 
-		final InOrder inOrder = inOrder(ldioManager, ldesClientStatusManager, repositoryManager, repositoryValidator);
+		final InOrder inOrder = inOrder(ldioPipelineManager, ldesClientStatusManager, repositoryManager, repositoryValidator);
 		inOrder.verify(repositoryManager).createRepository();
-		inOrder.verify(ldioManager).initPipeline(LDES_SERVER_URL);
+		inOrder.verify(ldioPipelineManager).initPipeline(LDES_SERVER_URL);
 		inOrder.verify(ldesClientStatusManager).waitUntilReplicated();
-		inOrder.verify(ldioManager).deletePipeline();
+		inOrder.verify(ldioPipelineManager).deletePipeline();
 		inOrder.verify(repositoryValidator).validate(new LinkedHashModel());
 		inOrder.verifyNoMoreInteractions();
 	}

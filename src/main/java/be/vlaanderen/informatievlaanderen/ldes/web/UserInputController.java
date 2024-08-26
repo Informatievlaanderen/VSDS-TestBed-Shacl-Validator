@@ -4,6 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.gitb.StateManager;
 import be.vlaanderen.informatievlaanderen.ldes.gitb.TestBedNotifier;
 import be.vlaanderen.informatievlaanderen.ldes.gitb.Utils;
 import be.vlaanderen.informatievlaanderen.ldes.services.TarSupplier;
+import be.vlaanderen.informatievlaanderen.ldes.valueobjects.StringContent;
 import com.gitb.core.ValueEmbeddingEnumeration;
 import com.gitb.tr.TAR;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,40 +39,40 @@ import java.util.List;
 @RestController
 public class UserInputController {
 
-    private final StateManager stateManager;
-    private final TestBedNotifier testBedNotifier;
+	private final StateManager stateManager;
+	private final TestBedNotifier testBedNotifier;
 
-    public UserInputController(StateManager stateManager, TestBedNotifier testBedNotifier) {
-        this.stateManager = stateManager;
-        this.testBedNotifier = testBedNotifier;
-    }
+	public UserInputController(StateManager stateManager, TestBedNotifier testBedNotifier) {
+		this.stateManager = stateManager;
+		this.testBedNotifier = testBedNotifier;
+	}
 
-    /**
-     * HTTP GET service to receive input for the test bed.
-     * <p/>
-     * Input received here will be provided back to the test bed as a response to its 'receive' step.
-     *
-     * @param session The test session ID this relates to. Omitting this will consider all active sessions.
-     * @param message The message to send. No message will result in an empty string.
-     * @return A text configuration message.
-     */
-    @GetMapping("/input")
-    public String provideMessage(@RequestParam(value="session", required = false) String session, @RequestParam(value="message", defaultValue = "") String message) {
-        List<String> sessionIds = new ArrayList<>();
-        if (session == null) {
-            // Send message to all current sessions.
-            sessionIds.addAll(stateManager.getAllSessions().keySet());
-        } else {
-            sessionIds.add(session);
-        }
-        // Input for the test bed is provided by means of a report.
-        TAR notificationReport = TarSupplier.success();
-        // The report can include any properties and with any nesting (by nesting list of map types). In this case we add a simple string.
-        notificationReport.getContext().getItem().add(Utils.createAnyContentSimple("messageReceived", message, ValueEmbeddingEnumeration.STRING));
-        for (String sessionId: sessionIds) {
-            testBedNotifier.notifyTestBed(sessionId, null, (String)stateManager.getSessionInfo(sessionId, StateManager.SessionData.CALLBACK_URL), notificationReport);
-        }
-        return String.format("Sent message [%s] to %s session(s)", message, sessionIds.size());
-    }
+	/**
+	 * HTTP GET service to receive input for the test bed.
+	 * <p/>
+	 * Input received here will be provided back to the test bed as a response to its 'receive' step.
+	 *
+	 * @param session The test session ID this relates to. Omitting this will consider all active sessions.
+	 * @param message The message to send. No message will result in an empty string.
+	 * @return A text configuration message.
+	 */
+	@GetMapping("/input")
+	public String provideMessage(@RequestParam(value = "session", required = false) String session, @RequestParam(value = "message", defaultValue = "") String message) {
+		List<String> sessionIds = new ArrayList<>();
+		if (session == null) {
+			// Send message to all current sessions.
+			sessionIds.addAll(stateManager.getAllSessions().keySet());
+		} else {
+			sessionIds.add(session);
+		}
+		// Input for the test bed is provided by means of a report.
+		TAR notificationReport = TarSupplier.success();
+		// The report can include any properties and with any nesting (by nesting list of map types). In this case we add a simple string.
+		notificationReport.getContext().getItem().add(new StringContent.Builder().withName("messageReceived").withStringValue(message).buildContent());
+		for (String sessionId : sessionIds) {
+			testBedNotifier.notifyTestBed(sessionId, null, (String) stateManager.getSessionInfo(sessionId, StateManager.SessionData.CALLBACK_URL), notificationReport);
+		}
+		return String.format("Sent message [%s] to %s session(s)", message, sessionIds.size());
+	}
 
 }

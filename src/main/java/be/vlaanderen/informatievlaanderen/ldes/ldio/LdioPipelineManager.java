@@ -16,13 +16,13 @@ import org.springframework.stereotype.Service;
 import static be.vlaanderen.informatievlaanderen.ldes.ldio.pipeline.ValidationPipelineSupplier.PIPELINE_NAME;
 
 @Service
-public class LdioManager {
-	private static final Logger log = LoggerFactory.getLogger(LdioManager.class);
+public class LdioPipelineManager {
+	private static final Logger log = LoggerFactory.getLogger(LdioPipelineManager.class);
 	private final EventStreamFetcher eventStreamFetcher;
 	private final RequestExecutor requestExecutor;
 	private final LdioConfigProperties ldioConfigProperties;
 
-	public LdioManager(EventStreamFetcher eventStreamFetcher, RequestExecutor requestExecutor, LdioConfigProperties ldioConfigProperties) {
+	public LdioPipelineManager(EventStreamFetcher eventStreamFetcher, RequestExecutor requestExecutor, LdioConfigProperties ldioConfigProperties) {
 		this.eventStreamFetcher = eventStreamFetcher;
 		this.requestExecutor = requestExecutor;
 		this.ldioConfigProperties = ldioConfigProperties;
