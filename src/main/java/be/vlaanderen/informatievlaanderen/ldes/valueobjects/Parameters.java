@@ -1,8 +1,10 @@
 package be.vlaanderen.informatievlaanderen.ldes.valueobjects;
 
 import com.gitb.core.AnyContent;
+import com.gitb.core.ValueEmbeddingEnumeration;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Base64;
 import java.util.List;
 
 public class Parameters {
@@ -12,8 +14,12 @@ public class Parameters {
 		this.items = items;
 	}
 
-	public String getString(String inputName) {
-		return new StringContent(getSingleContentForName(inputName)).getString();
+	public String getStringForName(String inputName) {
+		final AnyContent item = getSingleContentForName(inputName);
+		if(item.getEmbeddingMethod().equals(ValueEmbeddingEnumeration.BASE_64)) {
+			return new String(Base64.getDecoder().decode(item.getValue()));
+		}
+		return item.getValue();
 	}
 
 	private AnyContent getSingleContentForName(String name) {

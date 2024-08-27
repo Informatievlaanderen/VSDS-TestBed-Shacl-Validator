@@ -2,7 +2,10 @@ package be.vlaanderen.informatievlaanderen.ldes.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.valueobjects.ValidationReport;
 import be.vlaanderen.informatievlaanderen.ldes.valueobjects.severitylevels.SeverityLevel;
-import com.gitb.tr.*;
+import com.gitb.tr.BAR;
+import com.gitb.tr.TAR;
+import com.gitb.tr.TestAssertionGroupReportsType;
+import com.gitb.tr.ValidationCounters;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.rio.RDFFormat;
 
@@ -10,7 +13,6 @@ import java.math.BigInteger;
 
 public class ValidationReportToTarMapper {
 	private ValidationReportToTarMapper() {
-
 	}
 
 	public static TAR mapToTar(ValidationReport validationReport) {

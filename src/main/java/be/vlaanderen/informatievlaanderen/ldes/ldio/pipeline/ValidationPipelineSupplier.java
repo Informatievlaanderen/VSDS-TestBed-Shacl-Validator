@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.ldio.pipeline;
 
-import be.vlaanderen.informatievlaanderen.ldes.ldes.valueobjects.EventStreamProperties;
+import be.vlaanderen.informatievlaanderen.ldes.ldes.EventStreamProperties;
 import be.vlaanderen.informatievlaanderen.ldes.ldio.valuebojects.LdioPipeline;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

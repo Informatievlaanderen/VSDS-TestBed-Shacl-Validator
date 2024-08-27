@@ -1,8 +1,7 @@
-package be.vlaanderen.informatievlaanderen.ldes.ldes.services;
+package be.vlaanderen.informatievlaanderen.ldes.ldes;
 
 import be.vlaanderen.informatievlaanderen.ldes.http.RequestExecutor;
 import be.vlaanderen.informatievlaanderen.ldes.http.requests.GetRequest;
-import be.vlaanderen.informatievlaanderen.ldes.ldes.valueobjects.EventStreamProperties;
 import org.apache.http.HttpEntity;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.Statement;

@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.handlers;
+package be.vlaanderen.informatievlaanderen.ldes.shacl;
 
 import be.vlaanderen.informatievlaanderen.ldes.ldio.LdesClientStatusManager;
 import be.vlaanderen.informatievlaanderen.ldes.ldio.LdioPipelineManager;
@@ -15,7 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static org.mockito.Mockito.inOrder;
 
 @ExtendWith(MockitoExtension.class)
-class ShaclValidationHandlerTest {
+class ShaclValidatorTest {
 	private static final String LDES_SERVER_URL = "http://ldes-server:8080/collection";
 	@Mock
 	private Rdf4jRepositoryManager repositoryManager;
@@ -27,11 +27,11 @@ class ShaclValidationHandlerTest {
 	private RepositoryValidator repositoryValidator;
 
 	@InjectMocks
-	private ShaclValidationHandler shaclValidationHandler;
+	private ShaclValidator shaclValidator;
 
 	@Test
 	void test() {
-		shaclValidationHandler.validate(LDES_SERVER_URL, new LinkedHashModel());
+		shaclValidator.validate(LDES_SERVER_URL, new LinkedHashModel());
 
 		final InOrder inOrder = inOrder(ldioPipelineManager, ldesClientStatusManager, repositoryManager, repositoryValidator);
 		inOrder.verify(repositoryManager).createRepository();

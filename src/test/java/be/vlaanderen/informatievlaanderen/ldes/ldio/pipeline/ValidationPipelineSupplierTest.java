@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.ldio.pipeline;
 
-import be.vlaanderen.informatievlaanderen.ldes.ldes.valueobjects.EventStreamProperties;
+import be.vlaanderen.informatievlaanderen.ldes.ldes.EventStreamProperties;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;

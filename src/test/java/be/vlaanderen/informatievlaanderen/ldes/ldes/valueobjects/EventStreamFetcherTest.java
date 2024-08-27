@@ -1,7 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.ldes.valueobjects;
 
 import be.vlaanderen.informatievlaanderen.ldes.http.RequestExecutor;
-import be.vlaanderen.informatievlaanderen.ldes.ldes.services.EventStreamFetcher;
+import be.vlaanderen.informatievlaanderen.ldes.ldes.EventStreamFetcher;
+import be.vlaanderen.informatievlaanderen.ldes.ldes.EventStreamProperties;
 import org.apache.http.entity.BasicHttpEntity;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

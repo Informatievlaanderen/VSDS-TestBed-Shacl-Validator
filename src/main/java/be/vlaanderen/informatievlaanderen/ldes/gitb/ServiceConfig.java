@@ -14,34 +14,6 @@ import javax.xml.namespace.QName;
 public class ServiceConfig {
 
     /**
-     * The CXF endpoint that will serve messaging service calls.
-     *
-     * @return The endpoint.
-     */
-    @Bean
-    public EndpointImpl messagingService(Bus cxfBus, MessagingServiceImpl messagingServiceImplementation) {
-        EndpointImpl endpoint = new EndpointImpl(cxfBus, messagingServiceImplementation);
-        endpoint.setServiceName(new QName("http://www.gitb.com/ms/v1/", "MessagingServiceService"));
-        endpoint.setEndpointName(new QName("http://www.gitb.com/ms/v1/", "MessagingServicePort"));
-        endpoint.publish("/messaging");
-        return endpoint;
-    }
-
-    /**
-     * The CXF endpoint that will serve processing service calls.
-     *
-     * @return The endpoint.
-     */
-    @Bean
-    public EndpointImpl processingService(Bus cxfBus, ProcessingServiceImpl processingServiceImplementation) {
-        EndpointImpl endpoint = new EndpointImpl(cxfBus, processingServiceImplementation);
-        endpoint.setServiceName(new QName("http://www.gitb.com/ps/v1/", "ProcessingServiceService"));
-        endpoint.setEndpointName(new QName("http://www.gitb.com/ps/v1/", "ProcessingServicePort"));
-        endpoint.publish("/process");
-        return endpoint;
-    }
-
-    /**
      * The CXF endpoint that will serve validation service calls.
      *
      * @return The endpoint.

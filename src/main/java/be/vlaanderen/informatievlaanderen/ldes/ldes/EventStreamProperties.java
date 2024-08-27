@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.ldes.valueobjects;
+package be.vlaanderen.informatievlaanderen.ldes.ldes;
 
 public record EventStreamProperties(
 		String ldesServerUrl,

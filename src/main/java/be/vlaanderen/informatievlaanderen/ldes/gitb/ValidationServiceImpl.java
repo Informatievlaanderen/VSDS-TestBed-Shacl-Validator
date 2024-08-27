@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.gitb;
 
-import be.vlaanderen.informatievlaanderen.ldes.handlers.ShaclValidationHandler;
+import be.vlaanderen.informatievlaanderen.ldes.shacl.ShaclValidator;
 import be.vlaanderen.informatievlaanderen.ldes.services.RDFConverter;
 import be.vlaanderen.informatievlaanderen.ldes.services.ValidationReportToTarMapper;
 import be.vlaanderen.informatievlaanderen.ldes.valueobjects.Parameters;
@@ -28,11 +28,10 @@ public class ValidationServiceImpl implements ValidationService {
 	private static final Logger LOG = LoggerFactory.getLogger(ValidationServiceImpl.class);
 	private static final String SERVICE_NAME = "LdesMemberShaclValidator";
 
-	private final ShaclValidationHandler shaclValidationHandler;
+	private final ShaclValidator shaclValidator;
 
-	public ValidationServiceImpl(ShaclValidationHandler shaclValidationHandler) {
-		this.shaclValidationHandler = shaclValidationHandler;
-
+	public ValidationServiceImpl(ShaclValidator shaclValidator) {
+		this.shaclValidator = shaclValidator;
 	}
 
 	/**
@@ -85,11 +84,11 @@ public class ValidationServiceImpl implements ValidationService {
 		ValidationResponse result = new ValidationResponse();
 		// First extract the parameters and check to see if they are as expected.
 		final Parameters params = new Parameters(validateRequest.getInput());
-		String shacl = params.getString("shacl-shape");
-		String url = params.getString("server-url");
+		String shacl = params.getStringForName("shacl-shape");
+		String url = params.getStringForName("server-url");
 
 		final Model shaclShape = RDFConverter.readModel(shacl, RDFFormat.TURTLE);
-		final ValidationReport validationReport = shaclValidationHandler.validate(url, shaclShape);
+		final ValidationReport validationReport = shaclValidator.validate(url, shaclShape);
 		result.setReport(ValidationReportToTarMapper.mapToTar(validationReport));
 		return result;
 	}

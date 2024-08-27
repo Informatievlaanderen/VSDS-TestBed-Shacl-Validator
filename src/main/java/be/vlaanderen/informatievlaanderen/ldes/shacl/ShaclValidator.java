@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.handlers;
+package be.vlaanderen.informatievlaanderen.ldes.shacl;
 
 import be.vlaanderen.informatievlaanderen.ldes.ldio.LdesClientStatusManager;
 import be.vlaanderen.informatievlaanderen.ldes.ldio.LdioPipelineManager;
@@ -10,13 +10,13 @@ import org.eclipse.rdf4j.model.Model;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ShaclValidationHandler {
+public class ShaclValidator {
 	private final LdioPipelineManager ldioPipelineManager;
 	private final LdesClientStatusManager clientStatusManager;
 	private final Rdf4jRepositoryManager repositoryManager;
 	private final RepositoryValidator validator;
 
-	public ShaclValidationHandler(LdioPipelineManager ldioPipelineManager, LdesClientStatusManager clientStatusManager, Rdf4jRepositoryManager repositoryManager, RepositoryValidator validator) {
+	public ShaclValidator(LdioPipelineManager ldioPipelineManager, LdesClientStatusManager clientStatusManager, Rdf4jRepositoryManager repositoryManager, RepositoryValidator validator) {
 		this.ldioPipelineManager = ldioPipelineManager;
 		this.clientStatusManager = clientStatusManager;
 		this.repositoryManager = repositoryManager;
