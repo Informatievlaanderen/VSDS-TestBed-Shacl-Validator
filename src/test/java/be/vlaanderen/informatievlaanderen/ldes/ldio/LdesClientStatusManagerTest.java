@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.ldio;
 
 import be.vlaanderen.informatievlaanderen.ldes.http.RequestExecutor;
+import be.vlaanderen.informatievlaanderen.ldes.http.requests.GetRequest;
 import be.vlaanderen.informatievlaanderen.ldes.ldio.config.LdioConfigProperties;
 import be.vlaanderen.informatievlaanderen.ldes.ldio.excpeptions.LdesClientStatusUnavailableException;
 import be.vlaanderen.informatievlaanderen.ldes.ldio.valuebojects.ClientStatus;
@@ -15,7 +16,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.ByteArrayInputStream;
-import java.time.Duration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -45,8 +45,20 @@ class LdesClientStatusManagerTest {
 
 		ldesClientStatusManager.waitUntilReplicated();
 
-		verify(requestExecutor, timeout(10000)).execute(any(), eq(expectedStatusCodes));
+		verify(requestExecutor, timeout(10000).times(3)).execute(any(), eq(expectedStatusCodes));
+	}
 
+	@Test
+	void test_WaitUntilReplicated_when_StatusUnavailable() {
+		final BasicHttpEntity response = new BasicHttpEntity();
+		response.setContentLength(0);
+		when(requestExecutor.execute(any(GetRequest.class), eq(200), eq(404))).thenReturn(response);
+
+		assertThatThrownBy(ldesClientStatusManager::waitUntilReplicated)
+				.isInstanceOf(IllegalStateException.class)
+				.hasMessage("Unable to fetch the LDES client status");
+
+		verify(requestExecutor, times(5)).execute(any(GetRequest.class), eq(200), eq(404));
 	}
 
 	@Test

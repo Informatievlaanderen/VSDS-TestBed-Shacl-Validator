@@ -39,6 +39,7 @@ class ShaclValidationHandlerTest {
 		inOrder.verify(ldesClientStatusManager).waitUntilReplicated();
 		inOrder.verify(ldioPipelineManager).deletePipeline();
 		inOrder.verify(repositoryValidator).validate(new LinkedHashModel());
+		inOrder.verify(repositoryManager).deleteRepository();
 		inOrder.verifyNoMoreInteractions();
 	}
 }

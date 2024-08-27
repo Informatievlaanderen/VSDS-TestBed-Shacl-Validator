@@ -12,14 +12,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 public class LdesClientStatusManager {
 	private static final Logger log = LoggerFactory.getLogger(LdesClientStatusManager.class);
+	private static final int POLLING_PERIOD_IN_SECONDS = 5;
+	private static final int CLIENT_STATUS_FETCHING_RETRIES = 5;
 	private final RequestExecutor requestExecutor;
 	private final LdioConfigProperties ldioConfigProperties;
 
@@ -29,10 +29,10 @@ public class LdesClientStatusManager {
 	}
 
 	public void waitUntilReplicated() {
-		final int period = 5;
+		final CompletableFuture<Boolean> hasReplicated = new CompletableFuture<>();
+		final AtomicInteger retryCount = new AtomicInteger();
 		final TimeUnit timeUnit = TimeUnit.SECONDS;
 		final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
-		final CountDownLatch countDownLatch = new CountDownLatch(1);
 
 		log.atInfo().log("Waiting for the LDES client to complete REPLICATING");
 		scheduler.scheduleAtFixedRate(() -> {
@@ -40,21 +40,28 @@ public class LdesClientStatusManager {
 				final ClientStatus clientStatus = getClientStatus();
 				log.atDebug().log("Checking for LDES client status");
 				if (ClientStatus.isSuccessfullyReplicated(clientStatus)) {
-					countDownLatch.countDown();
 					log.atInfo().log("LDES client status is now {}", clientStatus.toString());
+					hasReplicated.complete(true);
 				}
 			} catch (LdesClientStatusUnavailableException e) {
-				log.atWarn().log("LDES client status is not available yet, trying again in {} {} ...", period, timeUnit.toString().toLowerCase());
+				if(retryCount.incrementAndGet() == CLIENT_STATUS_FETCHING_RETRIES) {
+					hasReplicated.complete(false);
+				}
+				log.atWarn().log("LDES client status is not available yet, trying again in {} {} ...", POLLING_PERIOD_IN_SECONDS, timeUnit.toString().toLowerCase());
 			} catch (Exception e) {
-				log.atError().log("Something went wrong while waiting for LDES client to be fully replicated", e);
+				hasReplicated.complete(false);
 			}
-		}, 0, period, timeUnit);
+		}, 0, POLLING_PERIOD_IN_SECONDS, timeUnit);
 
 		try {
-			countDownLatch.await();
+			if(Boolean.FALSE.equals(hasReplicated.get())) {
+				throw new IllegalStateException("Unable to fetch the LDES client status");
+			}
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
 			log.atError().log("Thread interrupted", e);
+		} catch (ExecutionException e) {
+			log.atError().log("Something went wrong while waiting for LDES client to be fully replicated", e);
 		} finally {
 			scheduler.shutdown();
 		}

@@ -5,7 +5,7 @@
         <v1:ValidateRequest>
             <input name="server-url" embeddingMethod="STRING">
                 <!-- Provide the input as-is. -->
-                <v11:value>http://CI00321761:8082/verkeersmetingen</v11:value>
+                <v11:value>http://ldes-server:8080/verkeersmetingen</v11:value>
             </input>
             <input name="shacl-shape" embeddingMethod="STRING">
                 <v11:value><![CDATA[

@@ -44,39 +44,30 @@ public class ValidationServiceImpl implements ValidationService {
 	 * @param parameters No parameters are expected.
 	 * @return The response.
 	 */
-//	@Override
-//	public GetModuleDefinitionResponse getModuleDefinition(Void parameters) {
-//		final var validationModule = new ValidationModule();
-//		validationModule.setId(SERVICE_NAME);
-//		validationModule.setOperation("V");
-//
-//		final var metadata = new Metadata();
-//		metadata.setName(SERVICE_NAME);
-//		validationModule.setMetadata(metadata);
-//
-//		final var ldesServerParam = new TypedParameter();
-//		ldesServerParam.setName("server-url");
-//		ldesServerParam.setType("string");
-//
-//		final var shaclShapeParam = new TypedParameter();
-//		shaclShapeParam.setName("shacl-shape");
-//		shaclShapeParam.setType("string");
-//
-//		final var inputs = new TypedParameters();
-//		inputs.getParam().addAll(List.of(ldesServerParam, shaclShapeParam));
-//		validationModule.setInputs(inputs);
-//
-//		GetModuleDefinitionResponse response = new GetModuleDefinitionResponse();
-//		response.setModule(validationModule);
-//		return response;
-//	}
-
 	@Override
 	public GetModuleDefinitionResponse getModuleDefinition(Void parameters) {
+		final var validationModule = new ValidationModule();
+		validationModule.setId(SERVICE_NAME);
+		validationModule.setOperation("V");
+
+		final var metadata = new Metadata();
+		metadata.setName(SERVICE_NAME);
+		validationModule.setMetadata(metadata);
+
+		final var ldesServerParam = new TypedParameter();
+		ldesServerParam.setName("server-url");
+		ldesServerParam.setType("string");
+
+		final var shaclShapeParam = new TypedParameter();
+		shaclShapeParam.setName("shacl-shape");
+		shaclShapeParam.setType("string");
+
+		final var inputs = new TypedParameters();
+		inputs.getParam().addAll(List.of(ldesServerParam, shaclShapeParam));
+		validationModule.setInputs(inputs);
+
 		GetModuleDefinitionResponse response = new GetModuleDefinitionResponse();
-		response.setModule(new ValidationModule());
-		response.getModule().setId(SERVICE_NAME);
-//        response.getModule().setConfigs();
+		response.setModule(validationModule);
 		return response;
 	}
 

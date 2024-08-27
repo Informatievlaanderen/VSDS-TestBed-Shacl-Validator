@@ -8,7 +8,7 @@ public enum ClientStatus {
 	ERROR;
 
 	public static boolean isSuccessfullyReplicated(ClientStatus status) {
-		return status.equals(ClientStatus.SYNCHRONISING) || status.equals(ClientStatus.COMPLETED);
+		return SYNCHRONISING.equals(status) || ClientStatus.COMPLETED.equals(status);
 	}
 
 }
