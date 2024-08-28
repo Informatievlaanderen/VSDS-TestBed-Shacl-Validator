@@ -57,8 +57,7 @@ jobs:
         with:
           name: artifacts
           path: |
-            **/*with-dependencies.jar
-            **/*application.jar
+            **/testbed-shacl-validator.jar
   create-image:
     runs-on: ubuntu-latest
     needs: build
