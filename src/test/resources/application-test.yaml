@@ -1,3 +1,0 @@
-ldio:
-  host: http://localhost:8888
-  sparql-host: http://localhost:7200

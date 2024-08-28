@@ -1,0 +1,28 @@
+{
+  "name": "validation-pipeline",
+  "description": "",
+  "input": {
+    "name": "Ldio:LdesClient",
+    "config": {
+      "urls": "%s",
+      "source-format": "application/n-quads"
+    }
+  },
+  "transformers": [
+    {
+      "name": "Ldio:VersionMaterialiser",
+      "config": {
+        "versionOf-property": "%s"
+      }
+    }
+  ],
+  "outputs": [
+    {
+      "name": "Ldio:RepositorySink",
+      "config": {
+        "sparql-host": "%s",
+        "repository-id": "%s"
+      }
+    }
+  ]
+}

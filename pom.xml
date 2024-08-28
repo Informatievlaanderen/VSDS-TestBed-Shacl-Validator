@@ -9,8 +9,8 @@
         <version>3.3.1</version>
     </parent>
     <groupId>be.vlaanderen.informatievlaanderen.ldes</groupId>
-    <artifactId>testbed-shacl-validator</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <artifactId>validator</artifactId>
+    <version>1.0-SNAPSHOT</version>
     <properties>
         <!-- Dependency and plugin versions. -->
         <com.gitb.version>1.23.1</com.gitb.version>
@@ -21,8 +21,7 @@
         <docker.image.prefix>local</docker.image.prefix>
 
         <scribejava.version>8.3.3</scribejava.version>
-        <rdf4j.version>4.3.5</rdf4j.version>
-        <jetbrains-annotations.version>24.1.0</jetbrains-annotations.version>
+        <rdf4j.version>4.3.6</rdf4j.version>
     </properties>
     <dependencies>
         <dependency>
@@ -48,11 +47,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jetbrains</groupId>
-            <artifactId>annotations</artifactId>
-            <version>${jetbrains-annotations.version}</version>
         </dependency>
 
 
@@ -80,34 +74,37 @@
         </dependency>
         <dependency>
             <groupId>org.eclipse.rdf4j</groupId>
-            <artifactId>rdf4j-runtime</artifactId>
+            <artifactId>rdf4j-client</artifactId>
             <type>pom</type>
-            <version>${rdf4j.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.eclipse.jetty</groupId>
-                    <artifactId>jetty-util</artifactId>
-                </exclusion>
-            </exclusions>
+            <version>4.3.5</version>
+<!--            <version>${rdf4j.version}</version>-->
         </dependency>
     </dependencies>
     <build>
-        <finalName>${project.artifactId}</finalName>
         <plugins>
+            <!-- Used to create an executable JAR file. -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <mainClass>be.vlaanderen.informatievlaanderen.ldes.Application</mainClass>
-                </configuration>
                 <executions>
                     <execution>
                         <goals>
-                            <goal>build-info</goal>
                             <goal>repackage</goal>
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <!-- Used to build a Docker image if Docker is natively supported. -->
+            <plugin>
+                <groupId>com.spotify</groupId>
+                <artifactId>dockerfile-maven-plugin</artifactId>
+                <version>${com.spotify.dockerfile-maven-plugin.version}</version>
+                <configuration>
+                    <repository>${docker.image.prefix}/${project.artifactId}</repository>
+                    <buildArgs>
+                        <JAR_FILE>target/${project.build.finalName}.jar</JAR_FILE>
+                    </buildArgs>
+                </configuration>
             </plugin>
         </plugins>
     </build>
