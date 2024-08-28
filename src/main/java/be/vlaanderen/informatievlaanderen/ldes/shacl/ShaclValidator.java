@@ -4,10 +4,12 @@ import be.vlaanderen.informatievlaanderen.ldes.ldio.LdesClientStatusManager;
 import be.vlaanderen.informatievlaanderen.ldes.ldio.LdioPipelineManager;
 import be.vlaanderen.informatievlaanderen.ldes.rdfrepo.Rdf4jRepositoryManager;
 import be.vlaanderen.informatievlaanderen.ldes.rdfrepo.RepositoryValidator;
+import be.vlaanderen.informatievlaanderen.ldes.valueobjects.ValidationParameters;
 import be.vlaanderen.informatievlaanderen.ldes.valueobjects.ValidationReport;
-import jakarta.annotation.PreDestroy;
 import org.eclipse.rdf4j.model.Model;
 import org.springframework.stereotype.Component;
+
+import static be.vlaanderen.informatievlaanderen.ldes.ldio.pipeline.ValidationPipelineSupplier.PIPELINE_NAME_TEMPLATE;
 
 @Component
 public class ShaclValidator {
@@ -23,18 +25,13 @@ public class ShaclValidator {
 		this.validator = validator;
 	}
 
-	public ValidationReport validate(String ldesServerURl, Model shaclShape) {
+	public ValidationReport validate(ValidationParameters params) {
 		repositoryManager.createRepository();
-		ldioPipelineManager.initPipeline(ldesServerURl);
-		clientStatusManager.waitUntilReplicated();
-		ldioPipelineManager.deletePipeline();
-		final Model shaclValidationReport = validator.validate(shaclShape);
+		ldioPipelineManager.initPipeline(params.ldesUrl(), params.pipelineName());
+		clientStatusManager.waitUntilReplicated(PIPELINE_NAME_TEMPLATE.formatted(params.sessionId()));
+		ldioPipelineManager.deletePipeline(params.pipelineName());
+		final Model shaclValidationReport = validator.validate(params.shaclShape());
 		repositoryManager.deleteRepository();
 		return new ValidationReport(shaclValidationReport);
-	}
-
-	@PreDestroy
-	public void onShutdown() {
-		ldioPipelineManager.deletePipeline();
 	}
 }

@@ -1,9 +1,10 @@
 package be.vlaanderen.informatievlaanderen.ldes.gitb;
 
-import be.vlaanderen.informatievlaanderen.ldes.shacl.ShaclValidator;
 import be.vlaanderen.informatievlaanderen.ldes.services.RDFConverter;
 import be.vlaanderen.informatievlaanderen.ldes.services.ValidationReportToTarMapper;
+import be.vlaanderen.informatievlaanderen.ldes.shacl.ShaclValidator;
 import be.vlaanderen.informatievlaanderen.ldes.valueobjects.Parameters;
+import be.vlaanderen.informatievlaanderen.ldes.valueobjects.ValidationParameters;
 import be.vlaanderen.informatievlaanderen.ldes.valueobjects.ValidationReport;
 import com.gitb.core.Metadata;
 import com.gitb.core.TypedParameter;
@@ -18,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Spring component that realises the validation service.
@@ -80,7 +82,8 @@ public class ValidationServiceImpl implements ValidationService {
 	 */
 	@Override
 	public ValidationResponse validate(ValidateRequest validateRequest) {
-		LOG.info("Received 'validate' command from test bed for session [{}]", validateRequest.getSessionId());
+		final String sessionId = validateRequest.getSessionId() != null ? validateRequest.getSessionId() : UUID.randomUUID().toString();
+		LOG.info("Received 'validate' command from test bed for session [{}]", sessionId);
 		ValidationResponse result = new ValidationResponse();
 		// First extract the parameters and check to see if they are as expected.
 		final Parameters params = new Parameters(validateRequest.getInput());
@@ -88,7 +91,8 @@ public class ValidationServiceImpl implements ValidationService {
 		String url = params.getStringForName("server-url");
 
 		final Model shaclShape = RDFConverter.readModel(shacl, RDFFormat.TURTLE);
-		final ValidationReport validationReport = shaclValidator.validate(url, shaclShape);
+		final ValidationParameters validationParams = new ValidationParameters(url, shaclShape, sessionId);
+		final ValidationReport validationReport = shaclValidator.validate(validationParams);
 		result.setReport(ValidationReportToTarMapper.mapToTar(validationReport));
 		return result;
 	}

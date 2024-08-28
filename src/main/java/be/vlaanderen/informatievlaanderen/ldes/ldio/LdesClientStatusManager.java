@@ -28,7 +28,7 @@ public class LdesClientStatusManager {
 		this.ldioConfigProperties = ldioConfigProperties;
 	}
 
-	public void waitUntilReplicated() {
+	public void waitUntilReplicated(String pipelineName) {
 		final CompletableFuture<Boolean> hasReplicated = new CompletableFuture<>();
 		final AtomicInteger retryCount = new AtomicInteger();
 		final TimeUnit timeUnit = TimeUnit.SECONDS;
@@ -37,7 +37,7 @@ public class LdesClientStatusManager {
 		log.atInfo().log("Waiting for the LDES client to complete REPLICATING");
 		scheduler.scheduleAtFixedRate(() -> {
 			try {
-				final ClientStatus clientStatus = getClientStatus();
+				final ClientStatus clientStatus = getClientStatus(pipelineName);
 				log.atDebug().log("Checking for LDES client status");
 				if (ClientStatus.isSuccessfullyReplicated(clientStatus)) {
 					log.atInfo().log("LDES client status is now {}", clientStatus.toString());
@@ -67,8 +67,8 @@ public class LdesClientStatusManager {
 		}
 	}
 
-	public ClientStatus getClientStatus() {
-		final String clientStatusUrl = ldioConfigProperties.getLdioLdesClientStatusUrl();
+	public ClientStatus getClientStatus(String pipelineName) {
+		final String clientStatusUrl = ldioConfigProperties.getLdioLdesClientStatusUrlTemplate().formatted(pipelineName);
 		final HttpEntity response = requestExecutor.execute(new GetRequest(clientStatusUrl), 200, 404);
 
 		if (response.getContentLength() == 0) {

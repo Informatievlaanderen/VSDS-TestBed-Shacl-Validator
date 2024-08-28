@@ -13,8 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import static be.vlaanderen.informatievlaanderen.ldes.ldio.pipeline.ValidationPipelineSupplier.PIPELINE_NAME;
-
 @Service
 public class LdioPipelineManager {
 	private static final Logger log = LoggerFactory.getLogger(LdioPipelineManager.class);
@@ -28,19 +26,19 @@ public class LdioPipelineManager {
 		this.ldioConfigProperties = ldioConfigProperties;
 	}
 
-	public void initPipeline(String serverUrl) {
+	public void initPipeline(String serverUrl, String pipelineName) {
 		final String ldioAdminPipelineUrl = ldioConfigProperties.getLdioAdminPipelineUrl();
 		final EventStreamProperties eventStreamProperties = eventStreamFetcher.fetchProperties(serverUrl);
-		final String json = new ValidationPipelineSupplier(eventStreamProperties, ldioConfigProperties.getSparqlHost()).getValidationPipelineAsJson();
+		final String json = new ValidationPipelineSupplier(eventStreamProperties, ldioConfigProperties.getSparqlHost(), pipelineName).getValidationPipelineAsJson();
 		requestExecutor.execute(new PostRequest(ldioAdminPipelineUrl, json, ContentType.APPLICATION_JSON), 201);
-		log.atInfo().log("LDIO pipeline created: {}", PIPELINE_NAME);
+		log.atInfo().log("LDIO pipeline created: {}", pipelineName);
 	}
 
-	public void deletePipeline() {
+	public void deletePipeline(String pipelineName) {
 		requestExecutor.execute(
-				new DeleteRequest(ldioConfigProperties.getLdioAdminPipelineUrl() + "/" + PIPELINE_NAME), 202, 204
+				new DeleteRequest(ldioConfigProperties.getLdioAdminPipelineUrl() + "/" + pipelineName), 202, 204
 		);
-		log.atInfo().log("LDIO pipeline deleted: {}", PIPELINE_NAME);
+		log.atInfo().log("LDIO pipeline deleted: {}", pipelineName);
 	}
 
 }

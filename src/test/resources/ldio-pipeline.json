@@ -1,5 +1,5 @@
 {
-  "name": "validation-pipeline",
+  "name": "validation-pipeline-test-pipeline-uuid",
   "description": "Pipeline that will only replicate an LDES for validation purposes",
   "input": {
     "name": "Ldio:LdesClient",

@@ -3,8 +3,6 @@ package be.vlaanderen.informatievlaanderen.ldes.ldio.config;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
-import static be.vlaanderen.informatievlaanderen.ldes.ldio.pipeline.ValidationPipelineSupplier.PIPELINE_NAME;
-
 @Configuration
 @ConfigurationProperties(prefix = "ldio")
 public class LdioConfigProperties {
@@ -33,8 +31,8 @@ public class LdioConfigProperties {
 		return "%s/admin/api/v1/pipeline".formatted(host);
 	}
 
-	public String getLdioLdesClientStatusUrl() {
-		return "%s/ldes-client/%s".formatted(getLdioAdminPipelineUrl(), PIPELINE_NAME);
+	public String getLdioLdesClientStatusUrlTemplate() {
+		return getLdioAdminPipelineUrl() + "/ldes-client/%s";
 	}
 
 	public String getRepositoryValidationUrl() {

@@ -39,7 +39,8 @@ import static org.mockito.Mockito.*;
 @ComponentScan(value = {"be.vlaanderen.informatievlaanderen.ldes"})
 class ValidationServiceImplTest {
 	private static final String LDIO_HOST = "http://ldio-workbench:8080";
-	private static final String LDIO_LDES_CLIENT_STATUS_URL = LDIO_HOST + "/admin/api/v1/pipeline/ldes-client/validation-pipeline";
+	private static final String PIPELINE_UUID = "test-pipeline-uuid";
+	private static final String LDIO_LDES_CLIENT_STATUS_URL = LDIO_HOST + "/admin/api/v1/pipeline/ldes-client/validation-pipeline-" + PIPELINE_UUID;
 	private static final String LDES_SERVER_URL = "http://ldes-server:8080/verkeersmetingen";
 	@MockBean
 	private RequestExecutor requestExecutor;

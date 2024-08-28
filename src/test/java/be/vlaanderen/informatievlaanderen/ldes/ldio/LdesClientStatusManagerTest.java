@@ -24,6 +24,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class LdesClientStatusManagerTest {
+	private static final String PIPELINE_NAME = "test-pipeline";
 	private final Integer[] expectedStatusCodes = {200, 404};
 	@Mock
 	private RequestExecutor requestExecutor;
@@ -43,7 +44,7 @@ class LdesClientStatusManagerTest {
 				.thenReturn(createResponse(ClientStatus.REPLICATING))
 				.thenReturn(createResponse(ClientStatus.SYNCHRONISING));
 
-		ldesClientStatusManager.waitUntilReplicated();
+		ldesClientStatusManager.waitUntilReplicated(PIPELINE_NAME);
 
 		verify(requestExecutor, timeout(10000).times(3)).execute(any(), eq(expectedStatusCodes));
 	}
@@ -54,7 +55,7 @@ class LdesClientStatusManagerTest {
 		response.setContentLength(0);
 		when(requestExecutor.execute(any(GetRequest.class), eq(200), eq(404))).thenReturn(response);
 
-		assertThatThrownBy(ldesClientStatusManager::waitUntilReplicated)
+		assertThatThrownBy(() -> ldesClientStatusManager.waitUntilReplicated(PIPELINE_NAME))
 				.isInstanceOf(IllegalStateException.class)
 				.hasMessage("Unable to fetch the LDES client status");
 
@@ -67,7 +68,7 @@ class LdesClientStatusManagerTest {
 		response.setContentLength(0);
 		when(requestExecutor.execute(any(), eq(expectedStatusCodes))).thenReturn(response);
 
-		assertThatThrownBy(ldesClientStatusManager::getClientStatus)
+		assertThatThrownBy(() -> ldesClientStatusManager.getClientStatus(PIPELINE_NAME))
 				.isInstanceOf(LdesClientStatusUnavailableException.class)
 				.hasMessage("Ldes client status not available.");
 	}
@@ -77,7 +78,7 @@ class LdesClientStatusManagerTest {
 	void test_GetClientStatus(ClientStatus status) {
 		when(requestExecutor.execute(any(), eq(expectedStatusCodes))).thenReturn(createResponse(status));
 
-		final ClientStatus actualStatus = ldesClientStatusManager.getClientStatus();
+		final ClientStatus actualStatus = ldesClientStatusManager.getClientStatus(PIPELINE_NAME);
 
 		assertThat(actualStatus).isEqualTo(status);
 	}

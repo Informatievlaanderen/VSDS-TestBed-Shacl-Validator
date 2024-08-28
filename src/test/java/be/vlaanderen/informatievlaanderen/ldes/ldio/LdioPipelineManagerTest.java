@@ -20,7 +20,7 @@ import org.springframework.util.ResourceUtils;
 
 import java.io.IOException;
 
-import static be.vlaanderen.informatievlaanderen.ldes.ldio.pipeline.ValidationPipelineSupplier.PIPELINE_NAME;
+import static be.vlaanderen.informatievlaanderen.ldes.ldio.pipeline.ValidationPipelineSupplier.PIPELINE_NAME_TEMPLATE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.assertArg;
 import static org.mockito.ArgumentMatchers.eq;
@@ -32,6 +32,8 @@ class LdioPipelineManagerTest {
 	private static final String LDIO_HOST = "http://localhost:8080";
 	private static final String SPARQL_HOST = "http://my-sparql-host.net";
 	private static final String LDES_SERVER_URL = "http://test-server/test-collection";
+	private static final String PIPELINE_UUID = "test-pipeline-uuid";
+	private static final String PIPELINE_NAME = PIPELINE_NAME_TEMPLATE.formatted(PIPELINE_UUID);
 	@Mock
 	private EventStreamFetcher eventStreamFetcher;
 	@Mock
@@ -51,7 +53,7 @@ class LdioPipelineManagerTest {
 		final JsonNode expectedJson = new ObjectMapper().readTree(ResourceUtils.getFile("classpath:ldio-pipeline.json"));
 		when(eventStreamFetcher.fetchProperties(LDES_SERVER_URL)).thenReturn(new EventStreamProperties(LDES_SERVER_URL, "http://purl.org/dc/terms/isVersionOf"));
 
-		ldioPipelineManager.initPipeline(LDES_SERVER_URL);
+		ldioPipelineManager.initPipeline(LDES_SERVER_URL, PIPELINE_NAME);
 
 		verify(eventStreamFetcher).fetchProperties(LDES_SERVER_URL);
 		verify(requestExecutor).execute(
@@ -67,7 +69,7 @@ class LdioPipelineManagerTest {
 	void test_DeletePipeline() {
 		final DeleteRequest expectedDeleteRequest = new DeleteRequest(LDIO_HOST + "/admin/api/v1/pipeline/" + PIPELINE_NAME);
 
-		ldioPipelineManager.deletePipeline();
+		ldioPipelineManager.deletePipeline(PIPELINE_NAME);
 
 		verify(requestExecutor).execute(
 				assertArg(actual -> assertThat(actual).usingRecursiveComparison().isEqualTo(expectedDeleteRequest)),
