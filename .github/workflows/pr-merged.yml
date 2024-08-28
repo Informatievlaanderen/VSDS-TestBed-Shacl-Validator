@@ -10,7 +10,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ldes-testbed-shacl-validator
+  IMAGE_NAME: testbed-shacl-validator
 
 jobs:
   build:
