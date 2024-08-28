@@ -4,7 +4,7 @@
     <soapenv:Body>
         <v1:ValidateRequest>
             <sessionId>test-pipeline-uuid</sessionId>
-            <input name="server-url" embeddingMethod="STRING">
+            <input name="ldes-url" embeddingMethod="STRING">
                 <!-- Provide the input as-is. -->
                 <v11:value>http://ldes-server:8080/verkeersmetingen</v11:value>
             </input>

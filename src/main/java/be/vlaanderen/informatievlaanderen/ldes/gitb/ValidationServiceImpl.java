@@ -56,7 +56,7 @@ public class ValidationServiceImpl implements ValidationService {
 		validationModule.setMetadata(metadata);
 
 		final var ldesServerParam = new TypedParameter();
-		ldesServerParam.setName("server-url");
+		ldesServerParam.setName("ldes-url");
 		ldesServerParam.setType("string");
 
 		final var shaclShapeParam = new TypedParameter();
@@ -88,7 +88,7 @@ public class ValidationServiceImpl implements ValidationService {
 		// First extract the parameters and check to see if they are as expected.
 		final Parameters params = new Parameters(validateRequest.getInput());
 		String shacl = params.getStringForName("shacl-shape");
-		String url = params.getStringForName("server-url");
+		String url = params.getStringForName("ldes-url");
 
 		final Model shaclShape = RDFConverter.readModel(shacl, RDFFormat.TURTLE);
 		final ValidationParameters validationParams = new ValidationParameters(url, shaclShape, sessionId);

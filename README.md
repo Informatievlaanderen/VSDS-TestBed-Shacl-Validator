@@ -14,7 +14,7 @@ Once running, the validation endpoint's WDSL is available at http://localhost:80
 [here](https://www.itb.ec.europa.eu/docs/services/latest/validation/) for further information on processing service implementations.
 
 This validation services requires in the validation call two parameters:
-1. **server-url**: the url of the LDES to validate
+1. **ldes-url**: the url of the LDES to validate
 2. **shacl-shape**: the shacl shape that will be used to validate the server against to
 
 # Prerequisites
