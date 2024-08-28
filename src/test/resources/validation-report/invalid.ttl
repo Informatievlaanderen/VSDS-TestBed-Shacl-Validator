@@ -1,0 +1,34 @@
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix rsx: <http://rdf4j.org/shacl-extensions#> .
+@prefix dash: <http://datashapes.org/dash#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdf4j: <http://rdf4j.org/schema/rdf4j#> .
+
+[] a sh:ValidationReport;
+  sh:conforms false;
+  rdf4j:truncated false;
+  sh:result [ a sh:ValidationResult;
+      sh:focusNode <https://verkeerscentrum.be/id/verkeersmetingen/observatie/00115T/v85/medium>;
+      rsx:shapesGraph rdf4j:nil;
+      sh:value [];
+      sh:resultPath <http://def.isotc211.org/iso19156/2011/Observation#OM_Observation.result>;
+      sh:sourceConstraintComponent sh:ClassConstraintComponent;
+      sh:resultSeverity sh:Violation;
+      sh:sourceShape [ a sh:PropertyShape;
+          sh:path <http://def.isotc211.org/iso19156/2011/Observation#OM_Observation.result>;
+          sh:class <http://www.w3.org/ns/sosa/sensor>
+        ]
+    ], [ a sh:ValidationResult;
+      sh:focusNode <https://verkeerscentrum.be/id/verkeersmetingen/observatie/00115T/v85/medium>;
+      rsx:shapesGraph rdf4j:nil;
+      sh:resultPath <http://www.opengis.net/ont/geosparql#asWKT>;
+      sh:sourceConstraintComponent sh:MinCountConstraintComponent;
+      sh:resultSeverity sh:Violation;
+      sh:sourceShape [ a sh:PropertyShape;
+          sh:path <http://www.opengis.net/ont/geosparql#asWKT>;
+          sh:minCount 10
+        ]
+    ] .

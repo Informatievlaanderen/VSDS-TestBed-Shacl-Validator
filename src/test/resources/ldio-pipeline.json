@@ -1,0 +1,25 @@
+{
+  "name": "validation-pipeline-test-pipeline-uuid",
+  "description": "Pipeline that will only replicate an LDES for validation purposes",
+  "input": {
+    "name": "Ldio:LdesClient",
+    "config": {
+      "urls": "http://test-server/test-collection",
+      "source-format": "application/n-quads",
+      "materialisation": {
+        "enabled": true,
+        "version-of-property": "http://purl.org/dc/terms/isVersionOf"
+      }
+    }
+  },
+  "outputs": [
+    {
+      "name": "Ldio:RepositorySink",
+      "config": {
+        "sparql-host": "http://my-sparql-host.net",
+        "repository-id": "validation",
+        "batch-size": 1
+      }
+    }
+  ]
+}

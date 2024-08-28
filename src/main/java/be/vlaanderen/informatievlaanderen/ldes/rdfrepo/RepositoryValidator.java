@@ -1,48 +1,42 @@
 package be.vlaanderen.informatievlaanderen.ldes.rdfrepo;
 
-import be.vlaanderen.informatievlaanderen.ldes.http.Request;
 import be.vlaanderen.informatievlaanderen.ldes.http.RequestExecutor;
-import be.vlaanderen.informatievlaanderen.ldes.services.RDFConverter;
+import be.vlaanderen.informatievlaanderen.ldes.http.requests.PostRequest;
+import be.vlaanderen.informatievlaanderen.ldes.ldio.config.LdioConfigProperties;
+import org.apache.http.HttpEntity;
 import org.eclipse.rdf4j.model.Model;
-import org.eclipse.rdf4j.model.impl.DynamicModelFactory;
-import org.eclipse.rdf4j.repository.Repository;
-import org.eclipse.rdf4j.repository.RepositoryConnection;
 import org.eclipse.rdf4j.rio.RDFFormat;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.eclipse.rdf4j.rio.Rio;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.UncheckedIOException;
+
+@Component
 public class RepositoryValidator {
+	private static final RDFFormat CONTENT_TYPE = RDFFormat.TURTLE;
+	private static final Logger log = LoggerFactory.getLogger(RepositoryValidator.class);
+	private final RequestExecutor requestExecutor;
+	private final String repositoryValidationUrl;
 
-    private static final String REPO_VALIDATION_URL_TEMPLATE = "%s/rest/repositories/%s/validate/text";
-    private static final RDFFormat CONTENT_TYPE = RDFFormat.TURTLE;
-    private String repoUrl;
-    @Autowired
-    private Rdf4jRepositoryManager repositoryManager;
-    @Autowired
-    private RequestExecutor requestExecutor;
-    private RepositoryConnection connection;
+	public RepositoryValidator(RequestExecutor requestExecutor, LdioConfigProperties ldioProperties) {
+		this.requestExecutor = requestExecutor;
+		this.repositoryValidationUrl = ldioProperties.getRepositoryValidationUrl();
+	}
 
-    public RepositoryValidator() {
-    }
-
-    public Model validate(Model shaclShape) {
-        String repositoryId = repositoryManager.initRepo();
-        Repository repository = repositoryManager.getRepo(repositoryId);
-        try {
-            Model validationReport = new DynamicModelFactory().createEmptyModel();
-            requestExecutor.execute(new Request(
-                    String.format(REPO_VALIDATION_URL_TEMPLATE, repoUrl, repositoryId),
-                    RDFConverter.writeModel(shaclShape, RDFFormat.TURTLE),
-                    RequestMethod.POST, CONTENT_TYPE.getName()));
-
-//            RepositoryConnection connection = repository.getConnection();
-//            connection.begin();
-//            connection.getStatements(null, null, null, );
-
-            return validationReport;
-        } finally {
-            repository.shutDown();
-        }
-
-    }
+	public Model validate(Model shaclShape) {
+		log.atInfo().log("Validating repository ...");
+		final StringWriter shaclShapeWriter = new StringWriter();
+		Rio.write(shaclShape, shaclShapeWriter, CONTENT_TYPE);
+		final PostRequest postRequest = new PostRequest(repositoryValidationUrl, shaclShapeWriter.toString(), CONTENT_TYPE.getDefaultMIMEType());
+		final HttpEntity response = requestExecutor.execute(postRequest);
+		try {
+			return Rio.parse(response.getContent(), CONTENT_TYPE);
+		} catch (IOException e) {
+			throw new UncheckedIOException(e);
+		}
+	}
 }
