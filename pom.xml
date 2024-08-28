@@ -10,7 +10,7 @@
     </parent>
     <groupId>be.vlaanderen.informatievlaanderen.ldes</groupId>
     <artifactId>testbed-shacl-validator</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
     <properties>
         <!-- Dependency and plugin versions. -->
         <com.gitb.version>1.23.1</com.gitb.version>
