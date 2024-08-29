@@ -6,8 +6,6 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConfigurationProperties(prefix = "ldio")
 public class LdioConfigProperties {
-	public static final String REPOSITORY_ID = "validation";
-
 	private String host;
 	private String sparqlHost;
 
@@ -35,7 +33,7 @@ public class LdioConfigProperties {
 		return getLdioAdminPipelineUrl() + "/ldes-client/%s";
 	}
 
-	public String getRepositoryValidationUrl() {
-		return "%s/rest/repositories/%s/validate/text".formatted(sparqlHost, REPOSITORY_ID);
+	public String getRepositoryValidationUrlTemplate() {
+		return sparqlHost + "/rest/repositories/%s/validate/text";
 	}
 }

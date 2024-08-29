@@ -8,8 +8,6 @@ import org.eclipse.rdf4j.model.Model;
 
 import java.util.Arrays;
 import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import static be.vlaanderen.informatievlaanderen.ldes.constants.RDFConstants.*;
 
@@ -29,8 +27,7 @@ public record ValidationReport(Model shaclReport) {
 
 	public SeverityLevel getHighestSeverityLevel() {
 		return Arrays.stream(SeverityLevels.all())
-				.collect(Collectors.toMap(Function.identity(), severityLevel -> getCountFor(severityLevel.getIri())))
-				.entrySet().stream()
+				.map(severityLevel -> Map.entry(severityLevel, getCountFor(severityLevel.getIri())))
 				.filter(entry -> entry.getValue() > 0)
 				.findFirst()
 				.map(Map.Entry::getKey)

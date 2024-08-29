@@ -9,7 +9,7 @@ import be.vlaanderen.informatievlaanderen.ldes.valueobjects.ValidationReport;
 import org.eclipse.rdf4j.model.Model;
 import org.springframework.stereotype.Component;
 
-import static be.vlaanderen.informatievlaanderen.ldes.ldio.pipeline.ValidationPipelineSupplier.PIPELINE_NAME_TEMPLATE;
+import static be.vlaanderen.informatievlaanderen.ldes.valueobjects.ValidationParameters.PIPELINE_NAME_TEMPLATE;
 
 @Component
 public class ShaclValidator {
@@ -26,12 +26,12 @@ public class ShaclValidator {
 	}
 
 	public ValidationReport validate(ValidationParameters params) {
-		repositoryManager.createRepository();
+		repositoryManager.createRepository(params.pipelineName());
 		ldioPipelineManager.initPipeline(params.ldesUrl(), params.pipelineName());
 		clientStatusManager.waitUntilReplicated(PIPELINE_NAME_TEMPLATE.formatted(params.sessionId()));
 		ldioPipelineManager.deletePipeline(params.pipelineName());
-		final Model shaclValidationReport = validator.validate(params.shaclShape());
-		repositoryManager.deleteRepository();
+		final Model shaclValidationReport = validator.validate(params.pipelineName(), params.shaclShape());
+		repositoryManager.deleteRepository(params.pipelineName());
 		return new ValidationReport(shaclValidationReport);
 	}
 }

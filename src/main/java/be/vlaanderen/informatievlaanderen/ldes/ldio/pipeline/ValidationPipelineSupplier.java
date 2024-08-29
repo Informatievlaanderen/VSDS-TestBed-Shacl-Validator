@@ -7,10 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.List;
 
-import static be.vlaanderen.informatievlaanderen.ldes.ldio.config.LdioConfigProperties.REPOSITORY_ID;
-
 public class ValidationPipelineSupplier {
-	public static final String PIPELINE_NAME_TEMPLATE = "validation-pipeline-%s";
 	private static final String PIPELINE_DESCRIPTION = "Pipeline that will only replicate an LDES for validation purposes";
 	private final EventStreamProperties eventStreamProperties;
 	private final String sparqlHost;
@@ -32,7 +29,7 @@ public class ValidationPipelineSupplier {
 						.build(),
 				List.of(new LdioRepositorySinkBuilder()
 						.withSparqlHost(sparqlHost)
-						.withRepositoryId(REPOSITORY_ID)
+						.withRepositoryId(pipelineName)
 						.withBatchSize(1)
 						.build())
 		);

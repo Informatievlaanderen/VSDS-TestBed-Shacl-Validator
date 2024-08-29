@@ -20,17 +20,18 @@ public class RepositoryValidator {
 	private static final RDFFormat CONTENT_TYPE = RDFFormat.TURTLE;
 	private static final Logger log = LoggerFactory.getLogger(RepositoryValidator.class);
 	private final RequestExecutor requestExecutor;
-	private final String repositoryValidationUrl;
+	private final String repositoryValidationUrlTemplate;
 
 	public RepositoryValidator(RequestExecutor requestExecutor, LdioConfigProperties ldioProperties) {
 		this.requestExecutor = requestExecutor;
-		this.repositoryValidationUrl = ldioProperties.getRepositoryValidationUrl();
+		this.repositoryValidationUrlTemplate = ldioProperties.getRepositoryValidationUrlTemplate();
 	}
 
-	public Model validate(Model shaclShape) {
+	public Model validate(String repositoryId, Model shaclShape) {
 		log.atInfo().log("Validating repository ...");
 		final StringWriter shaclShapeWriter = new StringWriter();
 		Rio.write(shaclShape, shaclShapeWriter, CONTENT_TYPE);
+		final String repositoryValidationUrl = repositoryValidationUrlTemplate.formatted(repositoryId);
 		final PostRequest postRequest = new PostRequest(repositoryValidationUrl, shaclShapeWriter.toString(), CONTENT_TYPE.getDefaultMIMEType());
 		final HttpEntity response = requestExecutor.execute(postRequest);
 		try {

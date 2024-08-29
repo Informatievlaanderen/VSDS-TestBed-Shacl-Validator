@@ -25,6 +25,7 @@ import static org.mockito.Mockito.when;
 class RepositoryValidatorTest {
 	private static final RDFFormat RDF_FORMAT = RDFFormat.TURTLE;
 	private static final String SHACL_CONFORMS_URI = "http://www.w3.org/ns/shacl#conforms";
+	private static final String REPOSITORY_ID = "validation-uuid";
 	private static Model shaclShape;
 	private RequestExecutor requestExecutor;
 	private RepositoryValidator repoValidator;
@@ -52,7 +53,7 @@ class RepositoryValidatorTest {
 		final URI resource = Objects.requireNonNull(this.getClass().getClassLoader().getResource("validation-report/valid.ttl")).toURI();
 		when(requestExecutor.execute(any())).thenReturn(new InputStreamEntity(new FileInputStream(new File(resource))));
 
-		final Model result = repoValidator.validate(shaclShape);
+		final Model result = repoValidator.validate(REPOSITORY_ID, shaclShape);
 
 		assertThat(result)
 				.filteredOn(statement -> statement.getPredicate().toString().equals(SHACL_CONFORMS_URI))
@@ -67,7 +68,7 @@ class RepositoryValidatorTest {
 		final URI resource = Objects.requireNonNull(this.getClass().getClassLoader().getResource("validation-report/invalid.ttl")).toURI();
 		when(requestExecutor.execute(any())).thenReturn(new InputStreamEntity(new FileInputStream(new File(resource))));
 
-		final Model result = repoValidator.validate(shaclShape);
+		final Model result = repoValidator.validate(REPOSITORY_ID, shaclShape);
 
 		assertThat(result)
 				.filteredOn(statement -> statement.getPredicate().toString().equals(SHACL_CONFORMS_URI))

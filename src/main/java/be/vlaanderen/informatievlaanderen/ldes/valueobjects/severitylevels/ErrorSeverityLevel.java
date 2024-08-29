@@ -4,7 +4,6 @@ import be.vlaanderen.informatievlaanderen.ldes.constants.RDFConstants;
 import be.vlaanderen.informatievlaanderen.ldes.services.TarSupplier;
 import com.gitb.tr.TAR;
 import com.gitb.tr.TestAssertionReportType;
-import com.gitb.tr.TestResultType;
 import jakarta.xml.bind.JAXBElement;
 import org.eclipse.rdf4j.model.IRI;
 
@@ -24,6 +23,6 @@ public class ErrorSeverityLevel implements SeverityLevel {
 
 	@Override
 	public TAR createTarReport() {
-		return new TarSupplier(TestResultType.FAILURE).get();
+		return TarSupplier.failure();
 	}
 }

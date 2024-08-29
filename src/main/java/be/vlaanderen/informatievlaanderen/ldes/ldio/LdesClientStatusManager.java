@@ -9,10 +9,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.concurrent.*;
+import java.time.Duration;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
@@ -22,20 +25,20 @@ public class LdesClientStatusManager {
 	private static final int CLIENT_STATUS_FETCHING_RETRIES = 5;
 	private final RequestExecutor requestExecutor;
 	private final LdioConfigProperties ldioConfigProperties;
+	private final TaskScheduler taskScheduler;
 
-	public LdesClientStatusManager(RequestExecutor requestExecutor, LdioConfigProperties ldioConfigProperties) {
+	public LdesClientStatusManager(RequestExecutor requestExecutor, LdioConfigProperties ldioConfigProperties, TaskScheduler taskScheduler) {
 		this.requestExecutor = requestExecutor;
 		this.ldioConfigProperties = ldioConfigProperties;
+		this.taskScheduler = taskScheduler;
 	}
 
 	public void waitUntilReplicated(String pipelineName) {
 		final CompletableFuture<Boolean> hasReplicated = new CompletableFuture<>();
 		final AtomicInteger retryCount = new AtomicInteger();
-		final TimeUnit timeUnit = TimeUnit.SECONDS;
-		final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
 		log.atInfo().log("Waiting for the LDES client to complete REPLICATING");
-		scheduler.scheduleAtFixedRate(() -> {
+		final var scheduledFuture = taskScheduler.scheduleAtFixedRate(() -> {
 			try {
 				final ClientStatus clientStatus = getClientStatus(pipelineName);
 				log.atDebug().log("Checking for LDES client status");
@@ -47,11 +50,11 @@ public class LdesClientStatusManager {
 				if(retryCount.incrementAndGet() == CLIENT_STATUS_FETCHING_RETRIES) {
 					hasReplicated.complete(false);
 				}
-				log.atWarn().log("LDES client status is not available yet, trying again in {} {} ...", POLLING_PERIOD_IN_SECONDS, timeUnit.toString().toLowerCase());
+				log.atWarn().log("LDES client status for pipeline {} is not available yet, trying again in {} seconds ...", pipelineName, POLLING_PERIOD_IN_SECONDS);
 			} catch (Exception e) {
 				hasReplicated.complete(false);
 			}
-		}, 0, POLLING_PERIOD_IN_SECONDS, timeUnit);
+		}, Duration.ofSeconds(POLLING_PERIOD_IN_SECONDS));
 
 		try {
 			if(Boolean.FALSE.equals(hasReplicated.get())) {
@@ -63,7 +66,7 @@ public class LdesClientStatusManager {
 		} catch (ExecutionException e) {
 			log.atError().log("Something went wrong while waiting for LDES client to be fully replicated", e);
 		} finally {
-			scheduler.shutdown();
+			scheduledFuture.cancel(true);
 		}
 	}
 

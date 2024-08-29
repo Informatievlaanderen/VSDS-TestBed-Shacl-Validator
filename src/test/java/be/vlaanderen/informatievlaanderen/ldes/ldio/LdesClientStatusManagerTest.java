@@ -7,6 +7,7 @@ import be.vlaanderen.informatievlaanderen.ldes.ldio.excpeptions.LdesClientStatus
 import be.vlaanderen.informatievlaanderen.ldes.ldio.valuebojects.ClientStatus;
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.BasicHttpEntity;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,6 +15,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
 import java.io.ByteArrayInputStream;
 
@@ -29,12 +31,24 @@ class LdesClientStatusManagerTest {
 	@Mock
 	private RequestExecutor requestExecutor;
 	private LdesClientStatusManager ldesClientStatusManager;
+	private ThreadPoolTaskScheduler scheduler;
 
 	@BeforeEach
 	void setUp() {
 		final LdioConfigProperties ldioConfigProperties = new LdioConfigProperties();
 		ldioConfigProperties.setHost("http://ldio-workben-host.vlaanderen.be");
-		ldesClientStatusManager = new LdesClientStatusManager(requestExecutor, ldioConfigProperties);
+
+		scheduler = new ThreadPoolTaskScheduler();
+		scheduler.initialize();
+
+		ldesClientStatusManager = new LdesClientStatusManager(requestExecutor, ldioConfigProperties, scheduler);
+	}
+
+	@AfterEach
+	void tearDown() {
+		if (scheduler != null) {
+			scheduler.shutdown();
+		}
 	}
 
 	@Test

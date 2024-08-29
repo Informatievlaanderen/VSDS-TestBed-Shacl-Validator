@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.stream.Stream;
 
+import static be.vlaanderen.informatievlaanderen.ldes.valueobjects.ValidationParameters.PIPELINE_NAME_TEMPLATE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -77,8 +78,8 @@ class ValidationServiceImplTest {
 		assertThat(result)
 				.extracting(HttpEntity::getBody, InstanceOfAssertFactories.STRING)
 				.contains(expectedShaclConformity);
-		verify(rdf4jRepositoryManager).createRepository();
-		verify(rdf4jRepositoryManager).deleteRepository();
+		verify(rdf4jRepositoryManager).createRepository(PIPELINE_NAME_TEMPLATE.formatted(PIPELINE_UUID));
+		verify(rdf4jRepositoryManager).deleteRepository(PIPELINE_NAME_TEMPLATE.formatted(PIPELINE_UUID));
 		verify(requestExecutor).execute(any(PostRequest.class), eq(201));
 		verify(requestExecutor).execute(any(DeleteRequest.class), eq(202), eq(204));
 	}

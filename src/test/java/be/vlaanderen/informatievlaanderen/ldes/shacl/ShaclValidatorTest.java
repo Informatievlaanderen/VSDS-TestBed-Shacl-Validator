@@ -13,7 +13,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static be.vlaanderen.informatievlaanderen.ldes.ldio.pipeline.ValidationPipelineSupplier.PIPELINE_NAME_TEMPLATE;
+import static be.vlaanderen.informatievlaanderen.ldes.valueobjects.ValidationParameters.PIPELINE_NAME_TEMPLATE;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.inOrder;
 
 @ExtendWith(MockitoExtension.class)
@@ -38,12 +39,12 @@ class ShaclValidatorTest {
 		shaclValidator.validate(new ValidationParameters(LDES_SERVER_URL, new LinkedHashModel(), PIPELINE_UUID));
 
 		final InOrder inOrder = inOrder(ldioPipelineManager, ldesClientStatusManager, repositoryManager, repositoryValidator);
-		inOrder.verify(repositoryManager).createRepository();
+		inOrder.verify(repositoryManager).createRepository(anyString());
 		inOrder.verify(ldioPipelineManager).initPipeline(LDES_SERVER_URL, PIPELINE_NAME);
 		inOrder.verify(ldesClientStatusManager).waitUntilReplicated(PIPELINE_NAME);
 		inOrder.verify(ldioPipelineManager).deletePipeline(PIPELINE_NAME);
-		inOrder.verify(repositoryValidator).validate(new LinkedHashModel());
-		inOrder.verify(repositoryManager).deleteRepository();
+		inOrder.verify(repositoryValidator).validate(PIPELINE_NAME, new LinkedHashModel());
+		inOrder.verify(repositoryManager).deleteRepository(anyString());
 		inOrder.verifyNoMoreInteractions();
 	}
 }

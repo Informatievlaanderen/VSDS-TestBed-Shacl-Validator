@@ -12,8 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import static be.vlaanderen.informatievlaanderen.ldes.ldio.config.LdioConfigProperties.REPOSITORY_ID;
-
 @Component
 public class Rdf4jRepositoryManager {
 	private static final Logger log = LoggerFactory.getLogger(Rdf4jRepositoryManager.class);
@@ -24,15 +22,15 @@ public class Rdf4jRepositoryManager {
 		repositoryManager.init();
 	}
 
-	public void createRepository() {
+	public void createRepository(String repositoryId) {
 		final RepositoryImplConfig repositoryTypeSpec = new SailRepositoryConfig(new ShaclSailConfig(new MemoryStoreConfig(true)));
-		final RepositoryConfig config = new RepositoryConfig(REPOSITORY_ID, repositoryTypeSpec);
+		final RepositoryConfig config = new RepositoryConfig(repositoryId, repositoryTypeSpec);
 		repositoryManager.addRepositoryConfig(config);
-		log.atInfo().log("Repository created with repository id: {}", REPOSITORY_ID);
+		log.atInfo().log("Repository created with repository id: {}", repositoryId);
 	}
 
-	public void deleteRepository() {
-		repositoryManager.removeRepository(REPOSITORY_ID);
-		log.atInfo().log("Repository deleted with repository id: {}", REPOSITORY_ID);
+	public void deleteRepository(String repositoryId) {
+		repositoryManager.removeRepository(repositoryId);
+		log.atInfo().log("Repository deleted with repository id: {}", repositoryId);
 	}
 }

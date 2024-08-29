@@ -12,7 +12,7 @@ import java.util.function.Supplier;
 public class TarSupplier implements Supplier<TAR> {
 	private final TestResultType testResultType;
 
-	public TarSupplier(TestResultType testResultType) {
+	private TarSupplier(TestResultType testResultType) {
 		this.testResultType = testResultType;
 	}
 
@@ -33,5 +33,13 @@ public class TarSupplier implements Supplier<TAR> {
 
 	public static TAR success() {
 		return new TarSupplier(TestResultType.SUCCESS).get();
+	}
+
+	public static TAR warning() {
+		return new TarSupplier(TestResultType.WARNING).get();
+	}
+
+	public static TAR failure() {
+		return new TarSupplier(TestResultType.FAILURE).get();
 	}
 }
