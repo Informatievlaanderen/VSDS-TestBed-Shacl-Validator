@@ -13,6 +13,11 @@ public class DeleteRequest implements HttpRequest {
 	}
 
 	@Override
+	public String getUrl() {
+		return url;
+	}
+
+	@Override
 	public HttpRequestBase createRequest() {
 		return new HttpDelete(url);
 	}

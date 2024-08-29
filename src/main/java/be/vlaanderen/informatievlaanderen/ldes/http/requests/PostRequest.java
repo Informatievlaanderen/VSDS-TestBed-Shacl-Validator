@@ -21,6 +21,11 @@ public class PostRequest implements HttpRequest {
 	}
 
 	@Override
+	public String getUrl() {
+		return url;
+	}
+
+	@Override
 	public HttpRequestBase createRequest() {
 		final var request = new HttpPost(url);
 		request.setEntity(new StringEntity(body, contentType));

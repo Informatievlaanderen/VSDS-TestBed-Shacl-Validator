@@ -34,7 +34,15 @@ public class LdioPipelineManager {
 		log.atInfo().log("LDIO pipeline created: {}", pipelineName);
 	}
 
+	public void haltPipeline(String pipelineName) {
+		log.atInfo().log("Halt of LDIO pipeline {} requested", pipelineName);
+		final String ldioAdminPipelineUrl = "%s/%s/halt".formatted(ldioConfigProperties.getLdioAdminPipelineUrl(), pipelineName);
+		requestExecutor.execute(new PostRequest(ldioAdminPipelineUrl, "", "*/*"), 200);
+		log.atInfo().log("LDIO pipeline halted: {}", pipelineName);
+	}
+
 	public void deletePipeline(String pipelineName) {
+		log.atInfo().log("Deletion of LDIO pipeline {} requested", pipelineName);
 		requestExecutor.execute(
 				new DeleteRequest(ldioConfigProperties.getLdioAdminPipelineUrl() + "/" + pipelineName), 202, 204
 		);

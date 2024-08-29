@@ -42,6 +42,7 @@ class ShaclValidatorTest {
 		inOrder.verify(repositoryManager).createRepository(anyString());
 		inOrder.verify(ldioPipelineManager).initPipeline(LDES_SERVER_URL, PIPELINE_NAME);
 		inOrder.verify(ldesClientStatusManager).waitUntilReplicated(PIPELINE_NAME);
+		inOrder.verify(ldioPipelineManager).haltPipeline(PIPELINE_NAME);
 		inOrder.verify(ldioPipelineManager).deletePipeline(PIPELINE_NAME);
 		inOrder.verify(repositoryValidator).validate(PIPELINE_NAME, new LinkedHashModel());
 		inOrder.verify(repositoryManager).deleteRepository(anyString());

@@ -94,6 +94,7 @@ public class ValidationServiceImpl implements ValidationService {
 		final ValidationParameters validationParams = new ValidationParameters(url, shaclShape, sessionId);
 		final ValidationReport validationReport = shaclValidator.validate(validationParams);
 		result.setReport(ValidationReportToTarMapper.mapToTar(validationReport));
+		LOG.atInfo().log("Validation completed with report: {}", validationReport);
 		return result;
 	}
 

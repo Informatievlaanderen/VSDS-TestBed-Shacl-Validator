@@ -37,4 +37,9 @@ public record ValidationReport(Model shaclReport) {
 	private int getCountFor(IRI severity) {
 		return Iterables.size(shaclReport.getStatements(null, SEVERITY, severity));
 	}
+
+	@Override
+	public String toString() {
+		return "ValidationReport [errorCount=" + errorCount() + ", warningCount=" + warningCount() + ", infoCount=" + infoCount() + "]";
+	}
 }

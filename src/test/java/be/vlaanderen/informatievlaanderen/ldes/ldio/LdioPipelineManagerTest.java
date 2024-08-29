@@ -66,6 +66,17 @@ class LdioPipelineManagerTest {
 	}
 
 	@Test
+	void test_HaltPipeline() {
+		final PostRequest expectedPostRequest = new PostRequest(LDIO_HOST + "/admin/api/v1/pipeline/" + PIPELINE_NAME + "/halt", "", "*/*");
+
+		ldioPipelineManager.haltPipeline(PIPELINE_NAME);
+
+		verify(requestExecutor).execute(
+				assertArg(actual -> assertThat(actual).usingRecursiveComparison().isEqualTo(expectedPostRequest)),
+				eq(200));
+	}
+
+	@Test
 	void test_DeletePipeline() {
 		final DeleteRequest expectedDeleteRequest = new DeleteRequest(LDIO_HOST + "/admin/api/v1/pipeline/" + PIPELINE_NAME);
 
