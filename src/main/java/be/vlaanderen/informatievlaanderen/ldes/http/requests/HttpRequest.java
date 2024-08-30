@@ -5,4 +5,8 @@ import org.apache.http.client.methods.HttpRequestBase;
 public interface HttpRequest {
 	String getUrl();
 	HttpRequestBase createRequest();
+
+	default String asString() {
+		return this.getClass().getSimpleName() + "(" + this.getUrl() + ")";
+	}
 }

@@ -9,11 +9,7 @@
 [] a sh:NodeShape ;
     sh:targetClass verkeers:Verkeersmeting ;
     sh:property [
-        sh:path <http://def.isotc211.org/iso19156/2011/Observation#OM_Observation.result> ;
-        sh:class <http://www.w3.org/ns/sosa/sensor> ;
-    ] ;
-    sh:property [
         sh:path geo:asWKT ;
-        sh:minCount 10 ;
+        sh:minCount 0 ;
     ] ;
 .

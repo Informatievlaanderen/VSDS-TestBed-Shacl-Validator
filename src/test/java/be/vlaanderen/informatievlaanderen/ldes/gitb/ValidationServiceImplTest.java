@@ -1,12 +1,11 @@
 package be.vlaanderen.informatievlaanderen.ldes.gitb;
 
+import be.vlaanderen.informatievlaanderen.ldes.http.HttpResponse;
 import be.vlaanderen.informatievlaanderen.ldes.http.RequestExecutor;
 import be.vlaanderen.informatievlaanderen.ldes.http.requests.DeleteRequest;
 import be.vlaanderen.informatievlaanderen.ldes.http.requests.GetRequest;
 import be.vlaanderen.informatievlaanderen.ldes.http.requests.PostRequest;
 import be.vlaanderen.informatievlaanderen.ldes.rdfrepo.Rdf4jRepositoryManager;
-import org.apache.http.entity.BasicHttpEntity;
-import org.apache.http.entity.InputStreamEntity;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -23,9 +22,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.util.ResourceUtils;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.stream.Stream;
@@ -63,13 +60,13 @@ class ValidationServiceImplTest {
 		when(requestExecutor.execute(new GetRequest(LDES_SERVER_URL)))
 				.thenReturn(createResponse(ResourceUtils.getFile("classpath:event-stream.ttl")));
 		when(requestExecutor.execute(any(PostRequest.class), eq(201)))
-				.thenReturn(new BasicHttpEntity());
+				.thenReturn(new HttpResponse(201, null));
 		when(requestExecutor.execute(new GetRequest(LDIO_LDES_CLIENT_STATUS_URL), 200, 404))
-				.thenReturn(createEmptyResponse())
-				.thenReturn(createResponse("\"REPLICATING\""))
-				.thenReturn(createResponse("\"SYNCHRONISING\""));
+				.thenReturn(new HttpResponse(404, null))
+				.thenReturn(new HttpResponse(200, "\"REPLICATING\""))
+				.thenReturn(new HttpResponse(200, "\"SYNCHRONISING\""));
 		when(requestExecutor.execute(any(DeleteRequest.class), eq(202), eq(204)))
-				.thenReturn(new BasicHttpEntity());
+				.thenReturn(new HttpResponse(202, null));
 		when(requestExecutor.execute(any(PostRequest.class)))
 				.thenReturn(createResponse(ResourceUtils.getFile("classpath:" + fileName)));
 
@@ -84,21 +81,8 @@ class ValidationServiceImplTest {
 		verify(requestExecutor).execute(any(DeleteRequest.class), eq(202), eq(204));
 	}
 
-	private static BasicHttpEntity createEmptyResponse() {
-		final BasicHttpEntity response = new BasicHttpEntity();
-		response.setContentLength(0);
-		return response;
-	}
-
-	private static BasicHttpEntity createResponse(String content) {
-		final BasicHttpEntity response = new BasicHttpEntity();
-		response.setContent(new ByteArrayInputStream(content.getBytes()));
-		response.setContentLength(content.length());
-		return response;
-	}
-
-	private static InputStreamEntity createResponse(File file) throws IOException {
-		return new InputStreamEntity(new FileInputStream(file));
+	private static HttpResponse createResponse(File file) throws IOException {
+		return new HttpResponse(200, Files.readString(file.toPath()));
 	}
 
 	private static HttpEntity<String> createRequest() throws IOException {

@@ -1,8 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.rdfrepo;
 
+import be.vlaanderen.informatievlaanderen.ldes.http.HttpResponse;
 import be.vlaanderen.informatievlaanderen.ldes.http.RequestExecutor;
 import be.vlaanderen.informatievlaanderen.ldes.ldio.config.LdioConfigProperties;
-import org.apache.http.entity.InputStreamEntity;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.eclipse.rdf4j.model.Literal;
 import org.eclipse.rdf4j.model.Model;
@@ -11,11 +11,12 @@ import org.eclipse.rdf4j.rio.Rio;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.util.ResourceUtils;
 
-import java.io.*;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Objects;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.file.Files;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -49,9 +50,9 @@ class RepositoryValidatorTest {
 	}
 
 	@Test
-	void given_ValidRepo_when_Validate_then_ReturnEmptyModel() throws FileNotFoundException, URISyntaxException {
-		final URI resource = Objects.requireNonNull(this.getClass().getClassLoader().getResource("validation-report/valid.ttl")).toURI();
-		when(requestExecutor.execute(any())).thenReturn(new InputStreamEntity(new FileInputStream(new File(resource))));
+	void given_ValidRepo_when_Validate_then_ReturnEmptyModel() throws IOException {
+		final String validationReport = Files.readString(ResourceUtils.getFile("classpath:validation-report/valid.ttl").toPath());
+		when(requestExecutor.execute(any())).thenReturn(new HttpResponse(200, validationReport));
 
 		final Model result = repoValidator.validate(REPOSITORY_ID, shaclShape);
 
@@ -64,9 +65,9 @@ class RepositoryValidatorTest {
 	}
 
 	@Test
-	void given_InvalidRepo_when_Validate_then_ReturnNonEmptyModel() throws FileNotFoundException, URISyntaxException {
-		final URI resource = Objects.requireNonNull(this.getClass().getClassLoader().getResource("validation-report/invalid.ttl")).toURI();
-		when(requestExecutor.execute(any())).thenReturn(new InputStreamEntity(new FileInputStream(new File(resource))));
+	void given_InvalidRepo_when_Validate_then_ReturnNonEmptyModel() throws IOException {
+		final String validationReport = Files.readString(ResourceUtils.getFile("classpath:validation-report/invalid.ttl").toPath());
+		when(requestExecutor.execute(any())).thenReturn(new HttpResponse(200, validationReport));
 
 		final Model result = repoValidator.validate(REPOSITORY_ID, shaclShape);
 

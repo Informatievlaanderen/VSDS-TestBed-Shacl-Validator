@@ -1,8 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.ldes;
 
+import be.vlaanderen.informatievlaanderen.ldes.http.HttpResponse;
 import be.vlaanderen.informatievlaanderen.ldes.http.RequestExecutor;
 import be.vlaanderen.informatievlaanderen.ldes.http.requests.GetRequest;
-import org.apache.http.HttpEntity;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
@@ -11,6 +11,7 @@ import org.eclipse.rdf4j.rio.Rio;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.io.StringReader;
 import java.io.UncheckedIOException;
 import java.util.Spliterator;
 import java.util.stream.StreamSupport;
@@ -27,8 +28,10 @@ public class EventStreamFetcher {
 
 	public EventStreamProperties fetchProperties(String url) {
 		final RDFFormat rdfFormat = RDFFormat.TURTLE;
-		final HttpEntity response = requestExecutor.execute(new GetRequest(url));
-		final Model model = extractModel(response, rdfFormat);
+		final HttpResponse response = requestExecutor.execute(new GetRequest(url));
+		final Model model = response.getBody()
+				.map(content -> extractModel(content, rdfFormat))
+				.orElseThrow(() -> new IllegalStateException("No eventstream properties could be extracted from %s".formatted(url)));
 
 		final Spliterator<Statement> statements = model.getStatements(null, SimpleValueFactory.getInstance().createIRI(LDES_VERSION_OF), null).spliterator();
 		return StreamSupport.stream(statements, false)
@@ -37,9 +40,9 @@ public class EventStreamFetcher {
 				.orElseThrow(() -> new IllegalStateException("Required properties of event stream for %s could not be found".formatted(url)));
 	}
 
-	private Model extractModel(HttpEntity response, RDFFormat rdfFormat) {
+	private Model extractModel(String content, RDFFormat rdfFormat) {
 		try {
-			return Rio.parse(response.getContent(), rdfFormat);
+			return Rio.parse(new StringReader(content), rdfFormat);
 		} catch (IOException e) {
 			throw new UncheckedIOException(e);
 		}

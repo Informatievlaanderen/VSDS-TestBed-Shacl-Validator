@@ -1,12 +1,12 @@
 package be.vlaanderen.informatievlaanderen.ldes.ldio;
 
+import be.vlaanderen.informatievlaanderen.ldes.http.HttpResponse;
 import be.vlaanderen.informatievlaanderen.ldes.http.RequestExecutor;
 import be.vlaanderen.informatievlaanderen.ldes.http.requests.GetRequest;
 import be.vlaanderen.informatievlaanderen.ldes.ldio.config.LdioConfigProperties;
 import be.vlaanderen.informatievlaanderen.ldes.ldio.excpeptions.LdesClientStatusUnavailableException;
 import be.vlaanderen.informatievlaanderen.ldes.ldio.valuebojects.ClientStatus;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.http.HttpEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -46,6 +46,7 @@ public class LdesClientStatusManager {
 
 
 	static class ReplicationTask extends TimerTask {
+		private final ObjectMapper objectMapper;
 		private final String pollingUrl;
 		private final RequestExecutor requestExecutor;
 		private final CompletableFuture<Boolean> future;
@@ -56,6 +57,7 @@ public class LdesClientStatusManager {
 			this.requestExecutor = requestExecutor;
 			this.future = future;
 			retryCount = new AtomicInteger();
+			objectMapper = new ObjectMapper();
 		}
 
 		@Override
@@ -78,15 +80,10 @@ public class LdesClientStatusManager {
 		}
 
 		public ClientStatus getClientStatus() {
-			final HttpEntity response = requestExecutor.execute(new GetRequest(pollingUrl), 200, 404);
-
-			if (response.getContentLength() == 0) {
-				throw new LdesClientStatusUnavailableException();
-			}
-
-			final ObjectMapper objectMapper = new ObjectMapper();
+			final HttpResponse response = requestExecutor.execute(new GetRequest(pollingUrl), 200, 404);
+			final String json = response.getBody().orElseThrow(LdesClientStatusUnavailableException::new);
 			try {
-				return objectMapper.readValue(response.getContent(), ClientStatus.class);
+				return objectMapper.readValue(json, ClientStatus.class);
 			} catch (IOException e) {
 				throw new IllegalStateException("Invalid client status received from %s".formatted(pollingUrl));
 			}
