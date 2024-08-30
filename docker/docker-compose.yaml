@@ -1,0 +1,81 @@
+version: '3.7'
+
+volumes:
+  gitb-repo:
+  gitb-dbdata:
+
+services:
+  # THESE SERVICES ARE ALL RELATED TO TESTBED
+  gitb-redis:
+    image: redis:7.2.5
+    container_name: itb-redis
+    restart: unless-stopped
+  gitb-mysql:
+    image: isaitb/gitb-mysql
+    container_name: itb-mysql
+    restart: unless-stopped
+    environment:
+      - MYSQL_ROOT_PASSWORD=CHANGE_ME
+      - MYSQL_PASSWORD=CHANGE_ME
+    volumes:
+      - gitb-dbdata:/var/lib/mysql
+    healthcheck:
+      test: "/usr/bin/mysql --user=root --password=$$MYSQL_ROOT_PASSWORD --execute \"SHOW DATABASES;\""
+      interval: 3s
+      retries: 20
+  gitb-srv:
+    image: isaitb/gitb-srv
+    container_name: itb-srv
+    restart: unless-stopped
+    environment:
+      # The root URL at which callbacks are made from custom test services or when receiving calls using
+      # built-in messaging handlers. If you don't use built-in messaging handlers and all custom test
+      # services are internal, you can adapt this URL to also be internal.
+      - HMAC_KEY=CHANGE_ME
+    ports:
+      - "8080:8080"
+  gitb-ui:
+    image: isaitb/gitb-ui
+    container_name: itb-ui
+    restart: unless-stopped
+    ports:
+      - "9000:9000"
+    environment:
+      - THEME=gitb
+      - DB_DEFAULT_PASSWORD=CHANGE_ME
+      - HMAC_KEY=CHANGE_ME
+      - AUTOMATION_API_ENABLED=true
+    volumes:
+      - gitb-repo:/gitb-repository
+    depends_on:
+      gitb-redis:
+        condition: service_started
+      gitb-mysql:
+        condition: service_healthy
+      gitb-srv:
+        condition: service_started
+
+  graphdb:
+    image: ontotext/graphdb:10.6.4
+    container_name: graphdb
+    restart: always
+    environment:
+      JAVA_OPTS: "-Xmx4g -Xms4g"
+    ports:
+      - "7200:7200"
+
+  ldio-workbench:
+    image: ghcr.io/informatievlaanderen/ldi-orchestrator:latest
+    container_name: ldio-workbench
+    ports:
+      - "8888:8080"
+
+  testbed-shacl-validator:
+    image: ghcr.io/testbed-shacl-validator:latest
+    depends_on:
+      - graphdb
+      - ldio-workbench
+    environment:
+      - LDIO_HOST=http://ldio-workbench:8080
+      - LDIO_SPARQLHOST=http://graphdb:7200
+      - SERVER_PORT=8080
