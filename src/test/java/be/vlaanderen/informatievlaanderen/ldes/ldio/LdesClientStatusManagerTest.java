@@ -1,10 +1,11 @@
 package be.vlaanderen.informatievlaanderen.ldes.ldio;
 
-import be.vlaanderen.informatievlaanderen.ldes.http.HttpResponse;
-import be.vlaanderen.informatievlaanderen.ldes.http.RequestExecutor;
-import be.vlaanderen.informatievlaanderen.ldes.http.requests.GetRequest;
-import be.vlaanderen.informatievlaanderen.ldes.ldio.config.LdioConfigProperties;
-import be.vlaanderen.informatievlaanderen.ldes.ldio.valuebojects.ClientStatus;
+import be.vlaanderen.informatievlaanderen.ldes.gitb.ldio.LdesClientStatusManager;
+import be.vlaanderen.informatievlaanderen.ldes.gitb.requestexecutor.HttpResponse;
+import be.vlaanderen.informatievlaanderen.ldes.gitb.requestexecutor.RequestExecutor;
+import be.vlaanderen.informatievlaanderen.ldes.gitb.requestexecutor.requests.GetRequest;
+import be.vlaanderen.informatievlaanderen.ldes.gitb.ldio.config.LdioConfigProperties;
+import be.vlaanderen.informatievlaanderen.ldes.gitb.ldio.valuebojects.ClientStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

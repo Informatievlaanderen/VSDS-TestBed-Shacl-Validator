@@ -1,11 +1,11 @@
 package be.vlaanderen.informatievlaanderen.ldes.gitb;
 
-import be.vlaanderen.informatievlaanderen.ldes.services.RDFConverter;
-import be.vlaanderen.informatievlaanderen.ldes.services.ValidationReportToTarMapper;
-import be.vlaanderen.informatievlaanderen.ldes.shacl.ShaclValidator;
-import be.vlaanderen.informatievlaanderen.ldes.valueobjects.Parameters;
-import be.vlaanderen.informatievlaanderen.ldes.valueobjects.ValidationParameters;
-import be.vlaanderen.informatievlaanderen.ldes.valueobjects.ValidationReport;
+import be.vlaanderen.informatievlaanderen.ldes.gitb.shacl.ShaclValidator;
+import be.vlaanderen.informatievlaanderen.ldes.gitb.services.RDFConverter;
+import be.vlaanderen.informatievlaanderen.ldes.gitb.services.ValidationReportToTarMapper;
+import be.vlaanderen.informatievlaanderen.ldes.gitb.valueobjects.Parameters;
+import be.vlaanderen.informatievlaanderen.ldes.gitb.shacl.valueobjects.ValidationParameters;
+import be.vlaanderen.informatievlaanderen.ldes.gitb.shacl.valueobjects.ValidationReport;
 import com.gitb.core.Metadata;
 import com.gitb.core.TypedParameter;
 import com.gitb.core.TypedParameters;
@@ -20,6 +20,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.UUID;
+
+import static be.vlaanderen.informatievlaanderen.ldes.gitb.shacl.valueobjects.ValidationParameters.LDES_URL_KEY;
+import static be.vlaanderen.informatievlaanderen.ldes.gitb.shacl.valueobjects.ValidationParameters.SHACL_SHAPE_KEY;
 
 /**
  * Spring component that realises the validation service.
@@ -36,15 +39,6 @@ public class ValidationServiceImpl implements ValidationService {
 		this.shaclValidator = shaclValidator;
 	}
 
-	/**
-	 * The purpose of the getModuleDefinition call is to inform its caller on how the service is supposed to be called.
-	 * <p/>
-	 * Note that defining the implementation of this service is optional, and can be empty unless you plan to publish
-	 * the service for use by third parties (in which case it serves as documentation on its expected inputs and outputs).
-	 *
-	 * @param parameters No parameters are expected.
-	 * @return The response.
-	 */
 	@Override
 	public GetModuleDefinitionResponse getModuleDefinition(Void parameters) {
 		final var validationModule = new ValidationModule();
@@ -56,11 +50,11 @@ public class ValidationServiceImpl implements ValidationService {
 		validationModule.setMetadata(metadata);
 
 		final var ldesServerParam = new TypedParameter();
-		ldesServerParam.setName("ldes-url");
+		ldesServerParam.setName(LDES_URL_KEY);
 		ldesServerParam.setType("string");
 
 		final var shaclShapeParam = new TypedParameter();
-		shaclShapeParam.setName("shacl-shape");
+		shaclShapeParam.setName(SHACL_SHAPE_KEY);
 		shaclShapeParam.setType("string");
 
 		final var inputs = new TypedParameters();
@@ -72,29 +66,27 @@ public class ValidationServiceImpl implements ValidationService {
 		return response;
 	}
 
-	/**
-	 * The validate operation is called to validate the input and produce a validation report.
-	 * <p>
-	 * The expected input is described for the service's client through the getModuleDefinition call.
-	 *
-	 * @param validateRequest The input parameters and configuration for the validation.
-	 * @return The response containing the validation report.
-	 */
 	@Override
 	public ValidationResponse validate(ValidateRequest validateRequest) {
-		final String sessionId = validateRequest.getSessionId() != null ? validateRequest.getSessionId() : UUID.randomUUID().toString();
-		LOG.info("Received 'validate' command from test bed for session [{}]", sessionId);
-		ValidationResponse result = new ValidationResponse();
-		// First extract the parameters and check to see if they are as expected.
-		final Parameters params = new Parameters(validateRequest.getInput());
-		String shacl = params.getStringForName("shacl-shape");
-		String url = params.getStringForName("ldes-url");
-
-		final Model shaclShape = RDFConverter.readModel(shacl, RDFFormat.TURTLE);
-		final ValidationParameters validationParams = new ValidationParameters(url, shaclShape, sessionId);
+		final ValidationParameters validationParams = extractValidationParamsFromRequest(validateRequest);
+		LOG.info("Received 'validate' command from test bed for session [{}]", validationParams.sessionId());
 		final ValidationReport validationReport = shaclValidator.validate(validationParams);
+		LOG.atInfo().log("Validation for session [{}] completed with report: {}", validationParams.sessionId(), validationReport);
+		return buildValidationResult(validationReport);
+	}
+
+	private ValidationParameters extractValidationParamsFromRequest(ValidateRequest validateRequest) {
+		final Parameters params = new Parameters(validateRequest.getInput());
+		final String sessionId = validateRequest.getSessionId() != null ? validateRequest.getSessionId() : UUID.randomUUID().toString();
+		String shacl = params.getStringForName(SHACL_SHAPE_KEY);
+		String url = params.getStringForName(LDES_URL_KEY);
+		final Model shaclShape = RDFConverter.readModel(shacl, RDFFormat.TURTLE);
+		return new ValidationParameters(url, shaclShape, sessionId);
+	}
+
+	private ValidationResponse buildValidationResult(ValidationReport validationReport) {
+		final ValidationResponse result = new ValidationResponse();
 		result.setReport(ValidationReportToTarMapper.mapToTar(validationReport));
-		LOG.atInfo().log("Validation completed with report: {}", validationReport);
 		return result;
 	}
 

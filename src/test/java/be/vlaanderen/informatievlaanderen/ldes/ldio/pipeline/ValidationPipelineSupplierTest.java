@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.ldio.pipeline;
 
-import be.vlaanderen.informatievlaanderen.ldes.ldes.EventStreamProperties;
+import be.vlaanderen.informatievlaanderen.ldes.gitb.ldio.ldes.EventStreamProperties;
+import be.vlaanderen.informatievlaanderen.ldes.gitb.ldio.pipeline.ValidationPipelineSupplier;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -8,7 +9,7 @@ import org.springframework.util.ResourceUtils;
 
 import java.io.IOException;
 
-import static be.vlaanderen.informatievlaanderen.ldes.valueobjects.ValidationParameters.PIPELINE_NAME_TEMPLATE;
+import static be.vlaanderen.informatievlaanderen.ldes.gitb.shacl.valueobjects.ValidationParameters.PIPELINE_NAME_TEMPLATE;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ValidationPipelineSupplierTest {

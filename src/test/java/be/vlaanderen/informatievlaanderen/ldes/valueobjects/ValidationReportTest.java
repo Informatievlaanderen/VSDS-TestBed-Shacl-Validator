@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.valueobjects;
 
-import be.vlaanderen.informatievlaanderen.ldes.valueobjects.severitylevels.SeverityLevels;
+import be.vlaanderen.informatievlaanderen.ldes.gitb.shacl.valueobjects.ValidationReport;
+import be.vlaanderen.informatievlaanderen.ldes.gitb.shacl.valueobjects.severitylevels.SeverityLevels;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.rio.RDFFormat;
 import org.eclipse.rdf4j.rio.Rio;

@@ -1,9 +1,9 @@
 package be.vlaanderen.informatievlaanderen.ldes.ldes.valueobjects;
 
-import be.vlaanderen.informatievlaanderen.ldes.http.HttpResponse;
-import be.vlaanderen.informatievlaanderen.ldes.http.RequestExecutor;
-import be.vlaanderen.informatievlaanderen.ldes.ldes.EventStreamFetcher;
-import be.vlaanderen.informatievlaanderen.ldes.ldes.EventStreamProperties;
+import be.vlaanderen.informatievlaanderen.ldes.gitb.requestexecutor.HttpResponse;
+import be.vlaanderen.informatievlaanderen.ldes.gitb.requestexecutor.RequestExecutor;
+import be.vlaanderen.informatievlaanderen.ldes.gitb.ldio.ldes.EventStreamFetcher;
+import be.vlaanderen.informatievlaanderen.ldes.gitb.ldio.ldes.EventStreamProperties;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

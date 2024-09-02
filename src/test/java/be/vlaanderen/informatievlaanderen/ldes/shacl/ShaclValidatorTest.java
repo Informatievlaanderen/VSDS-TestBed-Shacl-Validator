@@ -1,10 +1,11 @@
 package be.vlaanderen.informatievlaanderen.ldes.shacl;
 
-import be.vlaanderen.informatievlaanderen.ldes.ldio.LdesClientStatusManager;
-import be.vlaanderen.informatievlaanderen.ldes.ldio.LdioPipelineManager;
-import be.vlaanderen.informatievlaanderen.ldes.rdfrepo.Rdf4jRepositoryManager;
-import be.vlaanderen.informatievlaanderen.ldes.rdfrepo.RepositoryValidator;
-import be.vlaanderen.informatievlaanderen.ldes.valueobjects.ValidationParameters;
+import be.vlaanderen.informatievlaanderen.ldes.gitb.shacl.ShaclValidator;
+import be.vlaanderen.informatievlaanderen.ldes.gitb.ldio.LdesClientStatusManager;
+import be.vlaanderen.informatievlaanderen.ldes.gitb.ldio.LdioPipelineManager;
+import be.vlaanderen.informatievlaanderen.ldes.gitb.rdfrepo.Rdf4jRepositoryManager;
+import be.vlaanderen.informatievlaanderen.ldes.gitb.rdfrepo.RepositoryValidator;
+import be.vlaanderen.informatievlaanderen.ldes.gitb.shacl.valueobjects.ValidationParameters;
 import org.eclipse.rdf4j.model.impl.LinkedHashModel;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,7 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static be.vlaanderen.informatievlaanderen.ldes.valueobjects.ValidationParameters.PIPELINE_NAME_TEMPLATE;
+import static be.vlaanderen.informatievlaanderen.ldes.gitb.shacl.valueobjects.ValidationParameters.PIPELINE_NAME_TEMPLATE;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.inOrder;
 

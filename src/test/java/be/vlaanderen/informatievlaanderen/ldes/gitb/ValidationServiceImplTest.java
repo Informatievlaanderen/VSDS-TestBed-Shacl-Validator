@@ -1,11 +1,12 @@
 package be.vlaanderen.informatievlaanderen.ldes.gitb;
 
-import be.vlaanderen.informatievlaanderen.ldes.http.HttpResponse;
-import be.vlaanderen.informatievlaanderen.ldes.http.RequestExecutor;
-import be.vlaanderen.informatievlaanderen.ldes.http.requests.DeleteRequest;
-import be.vlaanderen.informatievlaanderen.ldes.http.requests.GetRequest;
-import be.vlaanderen.informatievlaanderen.ldes.http.requests.PostRequest;
-import be.vlaanderen.informatievlaanderen.ldes.rdfrepo.Rdf4jRepositoryManager;
+import be.vlaanderen.informatievlaanderen.ldes.gitb.config.ServiceConfig;
+import be.vlaanderen.informatievlaanderen.ldes.gitb.requestexecutor.HttpResponse;
+import be.vlaanderen.informatievlaanderen.ldes.gitb.requestexecutor.RequestExecutor;
+import be.vlaanderen.informatievlaanderen.ldes.gitb.requestexecutor.requests.DeleteRequest;
+import be.vlaanderen.informatievlaanderen.ldes.gitb.requestexecutor.requests.GetRequest;
+import be.vlaanderen.informatievlaanderen.ldes.gitb.requestexecutor.requests.PostRequest;
+import be.vlaanderen.informatievlaanderen.ldes.gitb.rdfrepo.Rdf4jRepositoryManager;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -27,7 +28,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.stream.Stream;
 
-import static be.vlaanderen.informatievlaanderen.ldes.valueobjects.ValidationParameters.PIPELINE_NAME_TEMPLATE;
+import static be.vlaanderen.informatievlaanderen.ldes.gitb.shacl.valueobjects.ValidationParameters.PIPELINE_NAME_TEMPLATE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 

@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes;
 
-import be.vlaanderen.informatievlaanderen.ldes.http.requests.PostRequest;
+import be.vlaanderen.informatievlaanderen.ldes.gitb.requestexecutor.requests.PostRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;

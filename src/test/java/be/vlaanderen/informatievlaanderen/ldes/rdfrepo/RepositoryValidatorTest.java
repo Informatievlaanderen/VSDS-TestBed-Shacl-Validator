@@ -1,8 +1,9 @@
 package be.vlaanderen.informatievlaanderen.ldes.rdfrepo;
 
-import be.vlaanderen.informatievlaanderen.ldes.http.HttpResponse;
-import be.vlaanderen.informatievlaanderen.ldes.http.RequestExecutor;
-import be.vlaanderen.informatievlaanderen.ldes.ldio.config.LdioConfigProperties;
+import be.vlaanderen.informatievlaanderen.ldes.gitb.rdfrepo.RepositoryValidator;
+import be.vlaanderen.informatievlaanderen.ldes.gitb.requestexecutor.HttpResponse;
+import be.vlaanderen.informatievlaanderen.ldes.gitb.requestexecutor.RequestExecutor;
+import be.vlaanderen.informatievlaanderen.ldes.gitb.ldio.config.LdioConfigProperties;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.eclipse.rdf4j.model.Literal;
 import org.eclipse.rdf4j.model.Model;
