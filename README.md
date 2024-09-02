@@ -39,7 +39,7 @@ This validation services requires in the validation call two parameters:
 
 * Docker
 * A complete up and running TestBed instance
-* An LDI Orchestrator
+* An [LDI Orchestrator](https://informatievlaanderen.github.io/VSDS-Linked-Data-Interactions/)
 * An [Ontotext GraphDB](https://www.ontotext.com/products/graphdb/) instance
 
 All these services are set up in the [`./docker/docker-compose.yaml`](./docker/docker-compose.yaml) config file, but
@@ -103,7 +103,7 @@ Secondly, test case xml file can be added to the `test_cases` folder.
     <metadata>
         <gitb:name>[TC1] Validate LDES</gitb:name>
         <gitb:version>1.0</gitb:version>
-        <gitb:description>Validate an LDES against a specific</gitb:description>
+        <gitb:description>Validate an LDES against a specific SHACL shape</gitb:description>
     </metadata>
     <actors>
         <gitb:actor id="LDESServer" role="SUT"/>
