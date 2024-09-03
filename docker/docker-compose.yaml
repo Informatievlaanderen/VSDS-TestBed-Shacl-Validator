@@ -1,5 +1,3 @@
-version: '3.7'
-
 volumes:
   gitb-repo:
   gitb-dbdata:
@@ -71,7 +69,7 @@ services:
       - "8888:8080"
 
   testbed-shacl-validator:
-    image: ghcr.io/testbed-shacl-validator:latest
+    image: ghcr.io/informatievlaanderen/testbed-shacl-validator:latest
     depends_on:
       - graphdb
       - ldio-workbench

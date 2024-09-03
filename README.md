@@ -51,7 +51,7 @@ here are dummy environment variables used that must be changed in a production e
 
 ```yaml
   testbed-shacl-validator:
-    image: ghcr.io/testbed-shacl-validator:latest
+    image: ghcr.io/informatievlaanderen/testbed-shacl-validator:latest
     depends_on:
       - <GRAPH_DB_SERVICE_NAME>
       - <LDIO_WORKBENCH_SERVICE_NAME>
@@ -65,7 +65,7 @@ In this specific tutorial, this would result in the following config:
 
 ```yaml
   testbed-shacl-validator:
-    image: ghcr.io/testbed-shacl-validator:latest
+    image: ghcr.io/informatievlaanderen/testbed-shacl-validator:latest
     depends_on:
       - graphdb
       - ldio-workbench
