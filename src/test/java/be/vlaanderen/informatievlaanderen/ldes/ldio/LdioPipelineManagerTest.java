@@ -52,7 +52,7 @@ class LdioPipelineManagerTest {
 	@Test
 	void test_InitPipeline() throws IOException {
 		final JsonNode expectedJson = new ObjectMapper().readTree(ResourceUtils.getFile("classpath:ldio-pipeline.json"));
-		when(eventStreamFetcher.fetchProperties(LDES_SERVER_URL)).thenReturn(new EventStreamProperties(LDES_SERVER_URL, "http://purl.org/dc/terms/isVersionOf"));
+		when(eventStreamFetcher.fetchProperties(LDES_SERVER_URL)).thenReturn(new EventStreamProperties(LDES_SERVER_URL, "http://purl.org/dc/terms/isVersionOf", "http://www.w3.org/ns/prov#generatedAtTime"));
 
 		ldioPipelineManager.initPipeline(LDES_SERVER_URL, PIPELINE_NAME);
 

@@ -6,6 +6,7 @@
     "config": {
       "urls": "http://test-server/test-collection",
       "source-format": "application/n-quads",
+      "timestamp-path": "http://www.w3.org/ns/prov#generatedAtTime",
       "materialisation": {
         "enabled": true,
         "version-of-property": "http://purl.org/dc/terms/isVersionOf"

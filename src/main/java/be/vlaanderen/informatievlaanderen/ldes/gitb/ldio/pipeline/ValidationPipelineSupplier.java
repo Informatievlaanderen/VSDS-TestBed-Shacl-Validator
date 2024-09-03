@@ -26,6 +26,7 @@ public class ValidationPipelineSupplier {
 				new LdioLdesClientBuilder()
 						.withUrl(eventStreamProperties.ldesServerUrl())
 						.withVersionOfProperty(eventStreamProperties.versionOfPath())
+						.withTimestampProperty(eventStreamProperties.timestampPath())
 						.build(),
 				List.of(new LdioRepositorySinkBuilder()
 						.withSparqlHost(sparqlHost)

@@ -17,4 +17,9 @@ public class LdioLdesClientBuilder extends LdioComponentBuilder {
 		setProperty("materialisation", Map.of("enabled", true, "version-of-property", versionOfProperty));
 		return this;
 	}
+
+	public LdioLdesClientBuilder withTimestampProperty(String timestampProperty) {
+		setProperty("timestamp-path", timestampProperty);
+		return this;
+	}
 }
