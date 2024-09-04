@@ -24,11 +24,13 @@ public class LdesClientStatusManager {
 	private static final int CLIENT_STATUS_FETCHING_RETRIES = 5;
 	private final RequestExecutor requestExecutor;
 	private final LdioConfigProperties ldioConfigProperties;
+	private final ObjectMapper objectMapper;
 
 
 	public LdesClientStatusManager(RequestExecutor requestExecutor, LdioConfigProperties ldioConfigProperties) {
 		this.requestExecutor = requestExecutor;
 		this.ldioConfigProperties = ldioConfigProperties;
+		objectMapper = new ObjectMapper();
 	}
 
 	public void waitUntilReplicated(String pipelineName) {
@@ -44,6 +46,16 @@ public class LdesClientStatusManager {
 		}).thenAccept(replicated -> timer.cancel()).join();
 	}
 
+	public ClientStatus getClientStatus(String pipelineName) {
+		final String pollingUrl = ldioConfigProperties.getLdioLdesClientStatusUrlTemplate().formatted(pipelineName);
+		final HttpResponse response = requestExecutor.execute(new GetRequest(pollingUrl), 200, 404);
+		final String json = response.getBody().orElseThrow(LdesClientStatusUnavailableException::new);
+		try {
+			return objectMapper.readValue(json, ClientStatus.class);
+		} catch (IOException e) {
+			throw new IllegalStateException("Invalid client status received from %s".formatted(pollingUrl));
+		}
+	}
 
 	static class ReplicationTask extends TimerTask {
 		private final ObjectMapper objectMapper;
@@ -74,7 +86,7 @@ public class LdesClientStatusManager {
 				if (retryCount.incrementAndGet() == CLIENT_STATUS_FETCHING_RETRIES) {
 					future.completeExceptionally(e);
 				}
-				log.atWarn().log("LDES client status for {} is not available yet at attempt {}, trying again in {} seconds ...", pollingUrl, retryCount.get() + 1, POLLING_PERIOD_IN_SECONDS);
+				log.atWarn().log("LDES client status for {} is not available yet at attempt {}, trying again in {} seconds ...", pollingUrl, retryCount.get(), POLLING_PERIOD_IN_SECONDS);
 			} catch (Exception e) {
 				future.completeExceptionally(e);
 			}

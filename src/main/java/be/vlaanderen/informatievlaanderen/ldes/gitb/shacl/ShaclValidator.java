@@ -4,12 +4,12 @@ import be.vlaanderen.informatievlaanderen.ldes.gitb.ldio.LdesClientStatusManager
 import be.vlaanderen.informatievlaanderen.ldes.gitb.ldio.LdioPipelineManager;
 import be.vlaanderen.informatievlaanderen.ldes.gitb.rdfrepo.Rdf4jRepositoryManager;
 import be.vlaanderen.informatievlaanderen.ldes.gitb.rdfrepo.RepositoryValidator;
-import be.vlaanderen.informatievlaanderen.ldes.gitb.shacl.valueobjects.ValidationParameters;
+import be.vlaanderen.informatievlaanderen.ldes.gitb.valueobjects.ValidationParameters;
 import be.vlaanderen.informatievlaanderen.ldes.gitb.shacl.valueobjects.ValidationReport;
 import org.eclipse.rdf4j.model.Model;
 import org.springframework.stereotype.Component;
 
-import static be.vlaanderen.informatievlaanderen.ldes.gitb.shacl.valueobjects.ValidationParameters.PIPELINE_NAME_TEMPLATE;
+import static be.vlaanderen.informatievlaanderen.ldes.gitb.valueobjects.ValidationParameters.PIPELINE_NAME_TEMPLATE;
 
 @Component
 public class ShaclValidator {

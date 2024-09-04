@@ -1,0 +1,11 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                  xmlns:v1="http://www.gitb.com/ps/v1/"
+                  xmlns:v11="http://www.gitb.com/core/v1/">
+    <soapenv:Header/>
+    <soapenv:Body>
+        <v1:ProcessRequest>
+            <sessionId>test-session-uuid</sessionId>
+            <!--BLANK_SPACE-->
+        </v1:ProcessRequest>
+    </soapenv:Body>
+</soapenv:Envelope>

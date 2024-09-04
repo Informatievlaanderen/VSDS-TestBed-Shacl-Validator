@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.gitb.shacl.valueobjects.severitylevels;
 
-import be.vlaanderen.informatievlaanderen.ldes.gitb.shacl.services.TarSupplier;
+import be.vlaanderen.informatievlaanderen.ldes.gitb.services.suppliers.TarSupplier;
 import com.gitb.tr.TAR;
 import com.gitb.tr.TestAssertionReportType;
 import jakarta.xml.bind.JAXBElement;

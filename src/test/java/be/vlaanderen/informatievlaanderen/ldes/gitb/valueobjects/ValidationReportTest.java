@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.valueobjects;
+package be.vlaanderen.informatievlaanderen.ldes.gitb.valueobjects;
 
 import be.vlaanderen.informatievlaanderen.ldes.gitb.shacl.valueobjects.ValidationReport;
 import be.vlaanderen.informatievlaanderen.ldes.gitb.shacl.valueobjects.severitylevels.SeverityLevels;

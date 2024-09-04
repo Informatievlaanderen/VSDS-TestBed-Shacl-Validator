@@ -4,7 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.gitb.shacl.ShaclValidator;
 import be.vlaanderen.informatievlaanderen.ldes.gitb.services.RDFConverter;
 import be.vlaanderen.informatievlaanderen.ldes.gitb.services.ValidationReportToTarMapper;
 import be.vlaanderen.informatievlaanderen.ldes.gitb.valueobjects.Parameters;
-import be.vlaanderen.informatievlaanderen.ldes.gitb.shacl.valueobjects.ValidationParameters;
+import be.vlaanderen.informatievlaanderen.ldes.gitb.valueobjects.ValidationParameters;
 import be.vlaanderen.informatievlaanderen.ldes.gitb.shacl.valueobjects.ValidationReport;
 import com.gitb.core.Metadata;
 import com.gitb.core.TypedParameter;
@@ -21,8 +21,8 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.UUID;
 
-import static be.vlaanderen.informatievlaanderen.ldes.gitb.shacl.valueobjects.ValidationParameters.LDES_URL_KEY;
-import static be.vlaanderen.informatievlaanderen.ldes.gitb.shacl.valueobjects.ValidationParameters.SHACL_SHAPE_KEY;
+import static be.vlaanderen.informatievlaanderen.ldes.gitb.valueobjects.ValidationParameters.LDES_URL_KEY;
+import static be.vlaanderen.informatievlaanderen.ldes.gitb.valueobjects.ValidationParameters.SHACL_SHAPE_KEY;
 
 /**
  * Spring component that realises the validation service.

@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.gitb.config;
 
+import be.vlaanderen.informatievlaanderen.ldes.gitb.ReplicationProcessingService;
 import be.vlaanderen.informatievlaanderen.ldes.gitb.ValidationServiceImpl;
 import org.apache.cxf.Bus;
 import org.apache.cxf.jaxws.EndpointImpl;
@@ -14,17 +15,21 @@ import javax.xml.namespace.QName;
 @Configuration
 public class ServiceConfig {
 
-    /**
-     * The CXF endpoint that will serve validation service calls.
-     *
-     * @return The endpoint.
-     */
     @Bean
     public EndpointImpl validationService(Bus cxfBus, ValidationServiceImpl validationServiceImplementation) {
         EndpointImpl endpoint = new EndpointImpl(cxfBus, validationServiceImplementation);
         endpoint.setServiceName(new QName("http://www.gitb.com/vs/v1/", "ValidationService"));
         endpoint.setEndpointName(new QName("http://www.gitb.com/vs/v1/", "ValidationServicePort"));
         endpoint.publish("/validation");
+        return endpoint;
+    }
+
+    @Bean
+    public EndpointImpl processingService(Bus cxfBus, ReplicationProcessingService replicationProcessingService) {
+        EndpointImpl endpoint = new EndpointImpl(cxfBus, replicationProcessingService);
+        endpoint.setServiceName(new QName("http://www.gitb.com/ps/v1/", "ProcessingServiceService"));
+        endpoint.setEndpointName(new QName("http://www.gitb.com/ps/v1/", "ProcessingServicePort"));
+        endpoint.publish("/process");
         return endpoint;
     }
 

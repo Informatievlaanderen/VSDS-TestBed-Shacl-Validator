@@ -1,6 +1,5 @@
-package be.vlaanderen.informatievlaanderen.ldes.ldio;
+package be.vlaanderen.informatievlaanderen.ldes.gitb.ldio;
 
-import be.vlaanderen.informatievlaanderen.ldes.gitb.ldio.LdesClientStatusManager;
 import be.vlaanderen.informatievlaanderen.ldes.gitb.requestexecutor.HttpResponse;
 import be.vlaanderen.informatievlaanderen.ldes.gitb.requestexecutor.RequestExecutor;
 import be.vlaanderen.informatievlaanderen.ldes.gitb.requestexecutor.requests.GetRequest;

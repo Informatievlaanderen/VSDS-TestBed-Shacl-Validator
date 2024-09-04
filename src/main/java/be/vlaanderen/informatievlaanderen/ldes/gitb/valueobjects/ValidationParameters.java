@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.gitb.shacl.valueobjects;
+package be.vlaanderen.informatievlaanderen.ldes.gitb.valueobjects;
 
 import org.eclipse.rdf4j.model.Model;
 

@@ -1,7 +1,6 @@
-package be.vlaanderen.informatievlaanderen.ldes.ldio;
+package be.vlaanderen.informatievlaanderen.ldes.gitb.ldio;
 
 import be.vlaanderen.informatievlaanderen.ldes.PostRequestAssert;
-import be.vlaanderen.informatievlaanderen.ldes.gitb.ldio.LdioPipelineManager;
 import be.vlaanderen.informatievlaanderen.ldes.gitb.requestexecutor.RequestExecutor;
 import be.vlaanderen.informatievlaanderen.ldes.gitb.requestexecutor.requests.DeleteRequest;
 import be.vlaanderen.informatievlaanderen.ldes.gitb.requestexecutor.requests.PostRequest;
@@ -21,7 +20,7 @@ import org.springframework.util.ResourceUtils;
 
 import java.io.IOException;
 
-import static be.vlaanderen.informatievlaanderen.ldes.gitb.shacl.valueobjects.ValidationParameters.PIPELINE_NAME_TEMPLATE;
+import static be.vlaanderen.informatievlaanderen.ldes.gitb.valueobjects.ValidationParameters.PIPELINE_NAME_TEMPLATE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.assertArg;
 import static org.mockito.ArgumentMatchers.eq;

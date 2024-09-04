@@ -28,7 +28,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.stream.Stream;
 
-import static be.vlaanderen.informatievlaanderen.ldes.gitb.shacl.valueobjects.ValidationParameters.PIPELINE_NAME_TEMPLATE;
+import static be.vlaanderen.informatievlaanderen.ldes.gitb.valueobjects.ValidationParameters.PIPELINE_NAME_TEMPLATE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -89,7 +89,7 @@ class ValidationServiceImplTest {
 	private static HttpEntity<String> createRequest() throws IOException {
 		final HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.TEXT_XML);
-		final String requestPayload = Files.readString(ResourceUtils.getFile("classpath:validate-request.xml").toPath());
+		final String requestPayload = Files.readString(ResourceUtils.getFile("classpath:soap-requests/validate-request.xml").toPath());
 		return new HttpEntity<>(requestPayload, headers);
 	}
 }
