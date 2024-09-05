@@ -1,21 +1,26 @@
 package be.vlaanderen.informatievlaanderen.ldes.gitb.valueobjects;
 
 import be.vlaanderen.informatievlaanderen.ldes.gitb.services.suppliers.TarSupplier;
+import com.gitb.core.AnyContent;
 import com.gitb.ps.ProcessResponse;
 import com.gitb.tr.TestResultType;
 
+import java.util.Arrays;
+
 public class ProcessResult {
 	private final TestResultType type;
-	private final Message message;
+	private final Message[] messages;
 
-	public ProcessResult(TestResultType type, Message message) {
+	public ProcessResult(TestResultType type, Message... messages) {
 		this.type = type;
-		this.message = message;
+		this.messages = messages;
 	}
 
 	public ProcessResponse convertToResponse() {
 		final ProcessResponse response = new ProcessResponse();
-		response.setReport(new TarSupplier(type, message.convertToContext()).get());
+		final AnyContent context = new AnyContent();
+		context.getItem().addAll(Arrays.stream(messages).map(Message::convertToAnyContent).toList());
+		response.setReport(new TarSupplier(type, context).get());
 		return response;
 	}
 

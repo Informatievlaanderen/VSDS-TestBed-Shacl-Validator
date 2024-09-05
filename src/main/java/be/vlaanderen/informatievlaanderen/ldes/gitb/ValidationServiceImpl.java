@@ -61,7 +61,7 @@ public class ValidationServiceImpl implements ValidationService {
 		inputs.getParam().addAll(List.of(ldesServerParam, shaclShapeParam));
 		validationModule.setInputs(inputs);
 
-		GetModuleDefinitionResponse response = new GetModuleDefinitionResponse();
+		final GetModuleDefinitionResponse response = new GetModuleDefinitionResponse();
 		response.setModule(validationModule);
 		return response;
 	}

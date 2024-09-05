@@ -1,18 +1,18 @@
 package be.vlaanderen.informatievlaanderen.ldes.gitb;
 
-import be.vlaanderen.informatievlaanderen.ldes.gitb.services.replication.ProcessExecutor;
 import be.vlaanderen.informatievlaanderen.ldes.gitb.services.replication.ProcessExecutors;
-import be.vlaanderen.informatievlaanderen.ldes.gitb.services.suppliers.TarSupplier;
-import be.vlaanderen.informatievlaanderen.ldes.gitb.valueobjects.Parameters;
+import be.vlaanderen.informatievlaanderen.ldes.gitb.valueobjects.ParameterDefinition;
 import be.vlaanderen.informatievlaanderen.ldes.gitb.valueobjects.ProcessParameters;
 import be.vlaanderen.informatievlaanderen.ldes.gitb.valueobjects.ProcessResult;
-import com.gitb.ps.*;
+import com.gitb.core.ConfigurationParameters;
+import com.gitb.core.Metadata;
 import com.gitb.ps.Void;
-import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import com.gitb.ps.*;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ReplicationProcessingService implements ProcessingService {
+	private static final String SERVICE_NAME = "ReplicationProcessingService";
 	private final ProcessExecutors processExecutors;
 
 	public ReplicationProcessingService(ProcessExecutors processExecutors) {
@@ -21,19 +21,38 @@ public class ReplicationProcessingService implements ProcessingService {
 
 	@Override
 	public GetModuleDefinitionResponse getModuleDefinition(Void parameters) {
-		return null;
+		final ProcessingModule processingModule = new ProcessingModule();
+		processingModule.setId(SERVICE_NAME);
+
+		final Metadata metadata = new Metadata();
+		metadata.setName(SERVICE_NAME);
+		processingModule.setMetadata(metadata);
+
+		processingModule.setConfigs(new ConfigurationParameters());
+
+		processExecutors.getProcessExecutors().stream()
+				.map(processExecutor -> {
+					final var processingOperation = new ProcessingOperation();
+					processingOperation.setName(processExecutor.getName());
+					processingOperation.getInputs().getParam().addAll(processExecutor
+							.getParameterDefinitions()
+							.stream()
+							.map(ParameterDefinition::convertToTypedParameter)
+							.toList());
+					return processingOperation;
+				})
+				.forEach(processingModule.getOperation()::add);
+
+		final GetModuleDefinitionResponse getModuleDefinitionResponse = new GetModuleDefinitionResponse();
+		getModuleDefinitionResponse.setModule(processingModule);
+		return getModuleDefinitionResponse;
 	}
 
 	@Override
 	public ProcessResponse process(ProcessRequest parameters) {
-		final ProcessExecutor processExecutor;
-		try {
-			processExecutor = processExecutors.getProcessExecutor(parameters.getOperation());
-		} catch (NoSuchBeanDefinitionException e) {
-			return ProcessResult.invalidOperation(e.getBeanName()).convertToResponse();
-		}
-		return processExecutor
-				.execute(new ProcessParameters(parameters.getSessionId(), new Parameters(parameters.getInput())))
+		return processExecutors.getProcessExecutor(parameters.getOperation())
+				.map(processExecutor -> processExecutor.execute(new ProcessParameters(parameters.getSessionId(), parameters.getInput())))
+				.orElse(ProcessResult.invalidOperation(parameters.getOperation()))
 				.convertToResponse();
 	}
 

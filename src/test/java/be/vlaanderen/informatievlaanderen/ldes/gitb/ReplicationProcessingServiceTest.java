@@ -4,7 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.gitb.config.ServiceConfig;
 import be.vlaanderen.informatievlaanderen.ldes.gitb.services.replication.CheckReplicatingStatusProcessExecutor;
 import be.vlaanderen.informatievlaanderen.ldes.gitb.services.replication.ProcessExecutor;
 import be.vlaanderen.informatievlaanderen.ldes.gitb.services.replication.StartReplicatingProcessExecutor;
-import be.vlaanderen.informatievlaanderen.ldes.gitb.valueobjects.ProcessParameters;
+import be.vlaanderen.informatievlaanderen.ldes.gitb.valueobjects.SessionId;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -21,7 +21,8 @@ import org.springframework.util.ResourceUtils;
 import java.io.IOException;
 import java.nio.file.Files;
 
-import static org.mockito.ArgumentMatchers.any;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.assertArg;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 
@@ -30,9 +31,8 @@ import static org.mockito.Mockito.verifyNoInteractions;
 @ContextConfiguration(classes = ServiceConfig.class)
 @ComponentScan(value = {"be.vlaanderen.informatievlaanderen.ldes"})
 class ReplicationProcessingServiceTest {
-	private static final String LDIO_HOST = "http://ldio-workbench:8080";
-	private static final String LDES_SERVER_URL = "http://ldes-server:8080/verkeersmetingen";
 	private static final String TEST_PIPELINE_UUID = "test-session-uuid";
+	private static final SessionId TEST_PIPELINE_SESSION_ID = new SessionId(TEST_PIPELINE_UUID);
 	@MockBean(name = StartReplicatingProcessExecutor.NAME)
 	private ProcessExecutor startReplicatingProcessExecutor;
 	@MockBean(name = CheckReplicatingStatusProcessExecutor.NAME)
@@ -51,7 +51,11 @@ class ReplicationProcessingServiceTest {
 				""";
 		restTemplate.postForEntity("/services/process?wsdl", createRequest(content), String.class);
 
-		verify(startReplicatingProcessExecutor).execute(new ProcessParameters(TEST_PIPELINE_UUID, any()));
+		verify(startReplicatingProcessExecutor).execute(assertArg(params ->
+				assertThat(params)
+						.extracting("sessionId")
+						.isEqualTo(TEST_PIPELINE_SESSION_ID)
+		));
 	}
 
 	@Test
@@ -59,7 +63,10 @@ class ReplicationProcessingServiceTest {
 		final String content = "<operation>checkReplicatingStatus</operation>";
 		restTemplate.postForEntity("/services/process?wsdl", createRequest(content), String.class);
 
-		verify(checkReplicatingProcessExecutor).execute(new ProcessParameters(TEST_PIPELINE_UUID, any()));
+		verify(checkReplicatingProcessExecutor).execute(assertArg(params -> assertThat(params)
+				.extracting("sessionId")
+				.isEqualTo(TEST_PIPELINE_SESSION_ID)
+		));
 	}
 
 	@Test
