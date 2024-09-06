@@ -3,6 +3,8 @@ package be.vlaanderen.informatievlaanderen.ldes.gitb.rdfrepo;
 import be.vlaanderen.informatievlaanderen.ldes.gitb.requestexecutor.RequestExecutor;
 import be.vlaanderen.informatievlaanderen.ldes.gitb.requestexecutor.requests.PostRequest;
 import be.vlaanderen.informatievlaanderen.ldes.gitb.ldio.config.LdioConfigProperties;
+import be.vlaanderen.informatievlaanderen.ldes.gitb.shacl.valueobjects.ValidationReport;
+import be.vlaanderen.informatievlaanderen.ldes.gitb.valueobjects.ValidationParameters;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.rio.RDFFormat;
 import org.eclipse.rdf4j.rio.Rio;
@@ -27,7 +29,11 @@ public class RepositoryValidator {
 		this.repositoryValidationUrlTemplate = ldioProperties.getRepositoryValidationUrlTemplate();
 	}
 
-	public Model validate(String repositoryId, Model shaclShape) {
+	public ValidationReport validate(ValidationParameters validationParameters) {
+		return validate(validationParameters.pipelineName(), validationParameters.shaclShape());
+	}
+
+	public ValidationReport validate(String repositoryId, Model shaclShape) {
 		log.atInfo().log("Validating repository ...");
 		final StringWriter shaclShapeWriter = new StringWriter();
 		Rio.write(shaclShape, shaclShapeWriter, CONTENT_TYPE);
@@ -39,7 +45,7 @@ public class RepositoryValidator {
 				.map(StringReader::new)
 				.orElseThrow(() -> new IllegalStateException("Unable to read validation report from response: missing report"));
 		try {
-			return Rio.parse(content, CONTENT_TYPE);
+			return new ValidationReport(Rio.parse(content, CONTENT_TYPE));
 		} catch (IOException e) {
 			throw new UncheckedIOException(e);
 		}

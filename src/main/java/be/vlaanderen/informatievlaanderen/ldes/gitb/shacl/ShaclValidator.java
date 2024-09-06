@@ -4,9 +4,8 @@ import be.vlaanderen.informatievlaanderen.ldes.gitb.ldio.LdesClientStatusManager
 import be.vlaanderen.informatievlaanderen.ldes.gitb.ldio.LdioPipelineManager;
 import be.vlaanderen.informatievlaanderen.ldes.gitb.rdfrepo.Rdf4jRepositoryManager;
 import be.vlaanderen.informatievlaanderen.ldes.gitb.rdfrepo.RepositoryValidator;
-import be.vlaanderen.informatievlaanderen.ldes.gitb.valueobjects.ValidationParameters;
 import be.vlaanderen.informatievlaanderen.ldes.gitb.shacl.valueobjects.ValidationReport;
-import org.eclipse.rdf4j.model.Model;
+import be.vlaanderen.informatievlaanderen.ldes.gitb.valueobjects.ValidationParameters;
 import org.springframework.stereotype.Component;
 
 import static be.vlaanderen.informatievlaanderen.ldes.gitb.valueobjects.ValidationParameters.PIPELINE_NAME_TEMPLATE;
@@ -26,16 +25,10 @@ public class ShaclValidator {
 	}
 
 	public ValidationReport validate(ValidationParameters params) {
-		setupPipelineAndTripleStore(params);
 		haltPipelineWhenReady(params);
-		final Model shaclValidationReport = validator.validate(params.pipelineName(), params.shaclShape());
+		final ValidationReport report = validator.validate(params.pipelineName(), params.shaclShape());
 		cleanup(params);
-		return new ValidationReport(shaclValidationReport);
-	}
-
-	private void setupPipelineAndTripleStore(ValidationParameters params) {
-		repositoryManager.createRepository(params.pipelineName());
-		ldioPipelineManager.initPipeline(params.ldesUrl(), params.pipelineName());
+		return report;
 	}
 
 	private void haltPipelineWhenReady(ValidationParameters params) {

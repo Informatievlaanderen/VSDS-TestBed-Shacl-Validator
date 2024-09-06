@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.gitb.services.replication;
 
 import be.vlaanderen.informatievlaanderen.ldes.gitb.ldio.LdesClientStatusManager;
+import be.vlaanderen.informatievlaanderen.ldes.gitb.ldio.LdioPipelineManager;
 import be.vlaanderen.informatievlaanderen.ldes.gitb.ldio.valuebojects.ClientStatus;
 import be.vlaanderen.informatievlaanderen.ldes.gitb.valueobjects.Message;
 import be.vlaanderen.informatievlaanderen.ldes.gitb.valueobjects.ParameterDefinition;
@@ -11,13 +12,15 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Component(CheckReplicatingStatusProcessExecutor.NAME)
-public class CheckReplicatingStatusProcessExecutor implements ProcessExecutor {
-	public static final String NAME = "checkReplicatingStatus";
+@Component(HaltWhenReplicatedProcessExecutor.NAME)
+public class HaltWhenReplicatedProcessExecutor implements ProcessExecutor {
+	public static final String NAME = "haltWhenReplicated";
 	private final LdesClientStatusManager ldesClientStatusManager;
+	private final LdioPipelineManager ldioPipelineManager;
 
-	public CheckReplicatingStatusProcessExecutor(LdesClientStatusManager ldesClientStatusManager) {
+	public HaltWhenReplicatedProcessExecutor(LdesClientStatusManager ldesClientStatusManager, LdioPipelineManager ldioPipelineManager) {
 		this.ldesClientStatusManager = ldesClientStatusManager;
+		this.ldioPipelineManager = ldioPipelineManager;
 	}
 
 	@Override
@@ -34,7 +37,12 @@ public class CheckReplicatingStatusProcessExecutor implements ProcessExecutor {
 	public ProcessResult execute(ProcessParameters processParameters) {
 		final ClientStatus status = ldesClientStatusManager.getClientStatus(processParameters.getPipelineName());
 		if(ClientStatus.isSuccessfullyReplicated(status)) {
-			return new ProcessResult(TestResultType.SUCCESS, new Message("STATUS", status.name()));
+			ldioPipelineManager.haltPipeline(processParameters.getPipelineName());
+			return new ProcessResult(
+					TestResultType.SUCCESS,
+					new Message("STATUS", status.name()),
+					new Message("MESSAGE", "PIPELINE will be PAUSED soon")
+			);
 		}
 		return new ProcessResult(
 				TestResultType.WARNING,

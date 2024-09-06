@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.gitb.services.replication;
 import be.vlaanderen.informatievlaanderen.ldes.gitb.ldio.LdesClientStatusManager;
 import be.vlaanderen.informatievlaanderen.ldes.gitb.ldio.LdioPipelineManager;
 import be.vlaanderen.informatievlaanderen.ldes.gitb.rdfrepo.Rdf4jRepositoryManager;
+import org.assertj.core.api.InstanceOfAssertFactories;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -23,7 +24,7 @@ class ProcessExecutorsTest {
 	@BeforeEach
 	void setUp() {
 		runner = new ApplicationContextRunner()
-				.withBean(CheckReplicatingStatusProcessExecutor.class, mock(LdesClientStatusManager.class))
+				.withBean(HaltWhenReplicatedProcessExecutor.class, mock(LdesClientStatusManager.class), mock(LdioPipelineManager.class))
 				.withBean(StartReplicatingProcessExecutor.class, mock(LdioPipelineManager.class), mock(Rdf4jRepositoryManager.class));
 	}
 
@@ -35,17 +36,21 @@ class ProcessExecutorsTest {
 			assertThat(executors)
 					.hasSize(2)
 					.map(ProcessExecutor::getName)
-					.containsExactlyInAnyOrder(StartReplicatingProcessExecutor.NAME, CheckReplicatingStatusProcessExecutor.NAME);
+					.containsExactlyInAnyOrder(StartReplicatingProcessExecutor.NAME, HaltWhenReplicatedProcessExecutor.NAME);
 		});
 	}
 
 	@ParameterizedTest(name = "{0}")
 	@MethodSource("expectedBeans")
-	void test_Get(String name, Class<? extends ProcessExecutors> beanClass) {
+	void test_Get(String name, Class<? extends ProcessExecutors> beanClass, int numOfParameterDefinitions) {
 		runner.run(context -> {
 			final Optional<ProcessExecutor> actualProcessExecutor = new ProcessExecutors(context).getProcessExecutor(name);
 
-			assertThat(actualProcessExecutor).containsInstanceOf(beanClass);
+			assertThat(actualProcessExecutor)
+					.containsInstanceOf(beanClass)
+					.get()
+					.extracting(ProcessExecutor::getParameterDefinitions, InstanceOfAssertFactories.LIST)
+					.hasSize(numOfParameterDefinitions);
 		});
 	}
 
@@ -60,8 +65,8 @@ class ProcessExecutorsTest {
 
 	static Stream<Arguments> expectedBeans() {
 		return Stream.of(
-				Arguments.of(CheckReplicatingStatusProcessExecutor.NAME, CheckReplicatingStatusProcessExecutor.class),
-				Arguments.of(StartReplicatingProcessExecutor.NAME, StartReplicatingProcessExecutor.class)
+				Arguments.of(HaltWhenReplicatedProcessExecutor.NAME, HaltWhenReplicatedProcessExecutor.class, 0),
+				Arguments.of(StartReplicatingProcessExecutor.NAME, StartReplicatingProcessExecutor.class, 1)
 		);
 	}
 }

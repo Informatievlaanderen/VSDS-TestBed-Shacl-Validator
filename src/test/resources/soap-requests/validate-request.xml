@@ -4,10 +4,6 @@
     <soapenv:Body>
         <v1:ValidateRequest>
             <sessionId>test-pipeline-uuid</sessionId>
-            <input name="ldes-url" embeddingMethod="STRING">
-                <!-- Provide the input as-is. -->
-                <v11:value>http://ldes-server:8080/verkeersmetingen</v11:value>
-            </input>
             <input name="shacl-shape" embeddingMethod="STRING">
                 <v11:value><![CDATA[
 @prefix sh: <http://www.w3.org/ns/shacl#> .

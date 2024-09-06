@@ -17,7 +17,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class StartReplicatingProcessExecutorTest {
-	private static final SessionId SESSION_ID = new SessionId("my-test-session-uuid");
+	private static final SessionId SESSION_ID = SessionId.from("my-test-session-uuid");
 	private static final String LDES_URL = "http://ldes-server:8080/collection/view";
 	private static final String PIPELINE_NAME = SESSION_ID.getPipelineName();
 	@Mock

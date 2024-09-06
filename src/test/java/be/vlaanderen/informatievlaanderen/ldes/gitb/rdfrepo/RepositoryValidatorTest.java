@@ -54,7 +54,7 @@ class RepositoryValidatorTest {
 		final String validationReport = Files.readString(ResourceUtils.getFile("classpath:validation-report/valid.ttl").toPath());
 		when(requestExecutor.execute(any())).thenReturn(new HttpResponse(200, validationReport));
 
-		final Model result = repoValidator.validate(REPOSITORY_ID, shaclShape);
+		final Model result = repoValidator.validate(REPOSITORY_ID, shaclShape).shaclReport();
 
 		assertThat(result)
 				.filteredOn(statement -> statement.getPredicate().toString().equals(SHACL_CONFORMS_URI))
@@ -69,7 +69,7 @@ class RepositoryValidatorTest {
 		final String validationReport = Files.readString(ResourceUtils.getFile("classpath:validation-report/invalid.ttl").toPath());
 		when(requestExecutor.execute(any())).thenReturn(new HttpResponse(200, validationReport));
 
-		final Model result = repoValidator.validate(REPOSITORY_ID, shaclShape);
+		final Model result = repoValidator.validate(REPOSITORY_ID, shaclShape).shaclReport();
 
 		assertThat(result)
 				.filteredOn(statement -> statement.getPredicate().toString().equals(SHACL_CONFORMS_URI))

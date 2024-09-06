@@ -15,7 +15,7 @@ public class ProcessParameters {
 	}
 
 	public ProcessParameters(String sessionId, List<AnyContent> items) {
-		this(new SessionId(sessionId), new Parameters(items));
+		this(SessionId.from(sessionId), new Parameters(items));
 	}
 
 	public String getPipelineName() {

@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.gitb;
 
 import be.vlaanderen.informatievlaanderen.ldes.gitb.config.ServiceConfig;
-import be.vlaanderen.informatievlaanderen.ldes.gitb.services.replication.CheckReplicatingStatusProcessExecutor;
+import be.vlaanderen.informatievlaanderen.ldes.gitb.services.replication.HaltWhenReplicatedProcessExecutor;
 import be.vlaanderen.informatievlaanderen.ldes.gitb.services.replication.ProcessExecutor;
 import be.vlaanderen.informatievlaanderen.ldes.gitb.services.replication.StartReplicatingProcessExecutor;
 import be.vlaanderen.informatievlaanderen.ldes.gitb.valueobjects.SessionId;
@@ -32,10 +32,10 @@ import static org.mockito.Mockito.verifyNoInteractions;
 @ComponentScan(value = {"be.vlaanderen.informatievlaanderen.ldes"})
 class ReplicationProcessingServiceTest {
 	private static final String TEST_PIPELINE_UUID = "test-session-uuid";
-	private static final SessionId TEST_PIPELINE_SESSION_ID = new SessionId(TEST_PIPELINE_UUID);
+	private static final SessionId TEST_PIPELINE_SESSION_ID = SessionId.from(TEST_PIPELINE_UUID);
 	@MockBean(name = StartReplicatingProcessExecutor.NAME)
 	private ProcessExecutor startReplicatingProcessExecutor;
-	@MockBean(name = CheckReplicatingStatusProcessExecutor.NAME)
+	@MockBean(name = HaltWhenReplicatedProcessExecutor.NAME)
 	private ProcessExecutor checkReplicatingProcessExecutor;
 
 	@Autowired
@@ -59,8 +59,8 @@ class ReplicationProcessingServiceTest {
 	}
 
 	@Test
-	void test_CheckReplicating() throws IOException {
-		final String content = "<operation>checkReplicatingStatus</operation>";
+	void test_HaltWhenReplicated() throws IOException {
+		final String content = "<operation>haltWhenReplicated</operation>";
 		restTemplate.postForEntity("/services/process?wsdl", createRequest(content), String.class);
 
 		verify(checkReplicatingProcessExecutor).execute(assertArg(params -> assertThat(params)
