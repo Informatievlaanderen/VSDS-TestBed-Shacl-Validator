@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.gitb;
 
 import be.vlaanderen.informatievlaanderen.ldes.gitb.config.ServiceConfig;
+import be.vlaanderen.informatievlaanderen.ldes.gitb.services.replication.DestroyPipelineProcessExecutor;
 import be.vlaanderen.informatievlaanderen.ldes.gitb.services.replication.HaltWhenReplicatedProcessExecutor;
 import be.vlaanderen.informatievlaanderen.ldes.gitb.services.replication.ProcessExecutor;
 import be.vlaanderen.informatievlaanderen.ldes.gitb.services.replication.StartReplicatingProcessExecutor;
@@ -37,6 +38,8 @@ class ReplicationProcessingServiceTest {
 	private ProcessExecutor startReplicatingProcessExecutor;
 	@MockBean(name = HaltWhenReplicatedProcessExecutor.NAME)
 	private ProcessExecutor checkReplicatingProcessExecutor;
+	@MockBean(name = DestroyPipelineProcessExecutor.NAME)
+	private ProcessExecutor destroyPipelineProcessExecutor;
 
 	@Autowired
 	private TestRestTemplate restTemplate;
@@ -70,6 +73,17 @@ class ReplicationProcessingServiceTest {
 	}
 
 	@Test
+	void test_DestroyPipeline() throws IOException {
+		final String content = "<operation>destroyPipeline</operation>";
+		restTemplate.postForEntity("/services/process?wsdl", createRequest(content), String.class);
+
+		verify(destroyPipelineProcessExecutor).execute(assertArg(params -> assertThat(params)
+				.extracting("sessionId")
+				.isEqualTo(TEST_PIPELINE_SESSION_ID)
+		));
+	}
+
+	@Test
 	void test_InvalidStartReplicatingRequest() throws IOException {
 		final String content = """
 				<operation>start-replicating</operation>
@@ -92,7 +106,7 @@ class ReplicationProcessingServiceTest {
 	}
 
 	private static String readPayload(String content) throws IOException {
-		final String payLoadTemplate = Files.readString(ResourceUtils.getFile("classpath:soap-requests/start-replicating-request.xml").toPath());
+		final String payLoadTemplate = Files.readString(ResourceUtils.getFile("classpath:soap-requests/process-request.xml").toPath());
 		return payLoadTemplate.replace("<!--BLANK_SPACE-->", content);
 	}
 

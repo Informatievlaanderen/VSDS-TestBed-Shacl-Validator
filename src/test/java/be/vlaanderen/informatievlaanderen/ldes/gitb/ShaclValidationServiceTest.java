@@ -32,7 +32,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(properties = {"ldio.host=http://ldio-workbench:8080", "ldio.sparql-host=http://graph-db:7200"}, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ContextConfiguration(classes = ServiceConfig.class)
 @ComponentScan(value = {"be.vlaanderen.informatievlaanderen.ldes"})
-class ValidationServiceImplTest {
+class ShaclValidationServiceTest {
 	@MockBean
 	private RequestExecutor requestExecutor;
 	@Autowired

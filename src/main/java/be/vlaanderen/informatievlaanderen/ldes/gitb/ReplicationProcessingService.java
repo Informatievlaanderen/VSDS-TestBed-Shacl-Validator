@@ -6,6 +6,7 @@ import be.vlaanderen.informatievlaanderen.ldes.gitb.valueobjects.ProcessParamete
 import be.vlaanderen.informatievlaanderen.ldes.gitb.valueobjects.ProcessResult;
 import com.gitb.core.ConfigurationParameters;
 import com.gitb.core.Metadata;
+import com.gitb.core.TypedParameters;
 import com.gitb.ps.Void;
 import com.gitb.ps.*;
 import org.springframework.stereotype.Component;
@@ -33,12 +34,14 @@ public class ReplicationProcessingService implements ProcessingService {
 		processExecutors.getProcessExecutors().stream()
 				.map(processExecutor -> {
 					final var processingOperation = new ProcessingOperation();
+					final var typedParameters = new TypedParameters();
 					processingOperation.setName(processExecutor.getName());
-					processingOperation.getInputs().getParam().addAll(processExecutor
+					typedParameters.getParam().addAll(processExecutor
 							.getParameterDefinitions()
 							.stream()
 							.map(ParameterDefinition::convertToTypedParameter)
 							.toList());
+					processingOperation.setInputs(typedParameters);
 					return processingOperation;
 				})
 				.forEach(processingModule.getOperation()::add);
@@ -52,20 +55,18 @@ public class ReplicationProcessingService implements ProcessingService {
 	public ProcessResponse process(ProcessRequest parameters) {
 		return processExecutors.getProcessExecutor(parameters.getOperation())
 				.map(processExecutor -> processExecutor.execute(new ProcessParameters(parameters.getSessionId(), parameters.getInput())))
-				.orElse(ProcessResult.invalidOperation(parameters.getOperation()))
+				.orElseGet(() -> ProcessResult.invalidOperation(parameters.getOperation()))
 				.convertToResponse();
 	}
 
 	@Override
 	public BeginTransactionResponse beginTransaction(BeginTransactionRequest parameters) {
-		System.out.println("BEGIN TRANSACTION");
-		return null;
+		return new BeginTransactionResponse();
 	}
 
 	@Override
 	public Void endTransaction(BasicRequest parameters) {
-		System.out.println("END TRANSACTION");
-		return null;
+		return new Void();
 	}
 
 

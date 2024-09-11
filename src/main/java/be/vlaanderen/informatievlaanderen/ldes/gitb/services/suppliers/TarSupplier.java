@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.gitb.services.suppliers;
 
 import com.gitb.core.AnyContent;
+import com.gitb.core.ValueEmbeddingEnumeration;
 import com.gitb.tr.TAR;
 import com.gitb.tr.TestResultType;
 
@@ -21,6 +22,8 @@ public class TarSupplier implements Supplier<TAR> {
 	public TarSupplier(TestResultType testResultType) {
 		this.testResultType = testResultType;
 		this.context = new AnyContent();
+		this.context.setType("string");
+		this.context.setEmbeddingMethod(ValueEmbeddingEnumeration.STRING);
 	}
 
 	@Override

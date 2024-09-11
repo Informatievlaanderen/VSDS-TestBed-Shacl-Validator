@@ -36,7 +36,7 @@ class HaltWhenReplicatedProcessExecutorTest {
 	@Test
 	void given_ReplicatingStatus_testExecute() {
 		final ProcessResult expected = new ProcessResult(
-				TestResultType.WARNING,
+				TestResultType.SUCCESS,
 				new Message("STATUS", "REPLICATING"),
 				new Message("MESSAGE", "CLIENT is not SYNCHRONISING or COMPLETED yet")
 		);

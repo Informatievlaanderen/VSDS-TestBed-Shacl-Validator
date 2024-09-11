@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.gitb.config;
 
 import be.vlaanderen.informatievlaanderen.ldes.gitb.ReplicationProcessingService;
-import be.vlaanderen.informatievlaanderen.ldes.gitb.ValidationServiceImpl;
+import be.vlaanderen.informatievlaanderen.ldes.gitb.ShaclValidationService;
 import org.apache.cxf.Bus;
 import org.apache.cxf.jaxws.EndpointImpl;
 import org.springframework.context.annotation.Bean;
@@ -16,8 +16,8 @@ import javax.xml.namespace.QName;
 public class ServiceConfig {
 
     @Bean
-    public EndpointImpl validationService(Bus cxfBus, ValidationServiceImpl validationServiceImplementation) {
-        EndpointImpl endpoint = new EndpointImpl(cxfBus, validationServiceImplementation);
+    public EndpointImpl validationService(Bus cxfBus, ShaclValidationService shaclValidationServiceImplementation) {
+        EndpointImpl endpoint = new EndpointImpl(cxfBus, shaclValidationServiceImplementation);
         endpoint.setServiceName(new QName("http://www.gitb.com/vs/v1/", "ValidationService"));
         endpoint.setEndpointName(new QName("http://www.gitb.com/vs/v1/", "ValidationServicePort"));
         endpoint.publish("/validation");

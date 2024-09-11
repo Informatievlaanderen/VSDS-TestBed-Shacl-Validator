@@ -1,15 +1,21 @@
 # VSDS TestBed Shacl Validator
 
 <!-- TOC -->
-
 * [VSDS TestBed Shacl Validator](#vsds-testbed-shacl-validator)
-    * [Introduction](#introduction)
-        * [Validation service implementation](#validation-service-implementation)
+  * [Introduction](#introduction)
+  * [ReplicationProcesssingService](#replicationprocesssingservice)
+      * [startReplicating](#startreplicating)
+      * [haltWhenReplicated](#haltwhenreplicated)
+      * [destroyPipeline](#destroypipeline)
+  * [ShaclValidationService](#shaclvalidationservice)
+  * [How to run in Docker](#how-to-run-in-docker)
     * [Prerequisites](#prerequisites)
-    * [Building and running](#building-and-running)
-        * [Live reload for development](#live-reload-for-development)
-        * [Packaging using Docker](#packaging-using-docker)
-
+    * [Steps to use the TestBed Shacl Validator](#steps-to-use-the-testbed-shacl-validator)
+      * [interact](#interact)
+      * [call](#call)
+  * [Building and running the project](#building-and-running-the-project)
+    * [Live reload for development](#live-reload-for-development)
+    * [Packaging using Docker](#packaging-using-docker)
 <!-- TOC -->
 
 ## Introduction
@@ -18,20 +24,51 @@ This application implements the [GITB test service APIs](https://www.itb.ec.euro
 [Spring Boot](https://spring.io/projects/spring-boot) web application that is meant to support
 [GITB TDL test cases](https://www.itb.ec.europa.eu/docs/tdl/latest/) running in the Interoperability Test Bed.
 
-### Validation service implementation
+## ReplicationProcesssingService
 
-The sample validation service validates a text against an (also provided) expected value. The user of the service can
-also select whether he/she wants to have a mismatch reported as an error or a warning. Finally, an information message
-is also returned in case values match but when ignoring casing.
+This service is responsible for creating an LDIO pipeline, checking if the LDES Client is still REPLACTING and
+destroying the pipeline afterwards. It is available through the endpoint's
+WSDL: http://localhost:8080/services/process?wsdl. This processing service has three operations:
 
-Once running, the validation endpoint's WDSL is available at http://localhost:8080/services/validation?WSDL. See
-[here](https://www.itb.ec.europa.eu/docs/services/latest/validation/) for further information on processing service
-implementations.
+#### startReplicating
+
+This operation is responsible for creating the pipeline, which immediately starts the replication process.
+
+Input parameters:
+
+|   Name   | Description                     | Required |
+|:--------:|---------------------------------|----------|
+| ldes-url | the url of the LDES to validate | true     |
+
+#### haltWhenReplicated
+
+This operation is responsible for polling and returning the status of the LDES Client
+
+#### destroyPipeline
+
+This operation is resonsible for deleting the LDIO pipeline, as well the GraphDB repository
+
+More information about processing services can be
+found [here](https://www.itb.ec.europa.eu/docs/services/latest/processing/)
+
+## ShaclValidationService
+
+This service is responsible for executing the SHACL validation and is accessible through the endpoint's
+WSDL: http://localhost:8080/services/validation?wsdl
+
+Input parameters:
+
+|    Name     | Description                                                         | Required |
+|:-----------:|---------------------------------------------------------------------|----------|
+| shacl-shape | the shacl shape that will be used to validate the server against to | true     |
 
 This validation services requires in the validation call two parameters:
 
 1. **ldes-url**: the url of the LDES to validate
 2. **shacl-shape**: the shacl shape that will be used to validate the server against to
+
+More information about validation services can be
+found [here](https://www.itb.ec.europa.eu/docs/services/latest/validation/)
 
 ## How to run in Docker
 
@@ -75,6 +112,8 @@ In this specific tutorial, this would result in the following config:
       - SERVER_PORT=8080
 ```
 
+This service has already been added to the provided `docker-compose.yaml` file.
+
 2. Start up all the services
 
 ```shell
@@ -92,10 +131,24 @@ First of all, make a folder that will contain all required files for the test su
 ```shell
 mkdir validate_ldes_to_shacl_shape
 cd validate_ldes_to_shacl_shape
+```
+
+Secondly, a scriptlet will be added to the test suite, which contains all the required logic to create the necessary
+LDIO pipelines, check the LDES Client status and so on.
+
+```shell
+mkdir scriptlets
+```
+
+In this directory, place the [`validate-ldes.xml`](./docker/scriplets/validate-ldes.xml) file.
+
+Now, the test cases can be written and added to the test suite. First, a new folder must be created.
+
+```shell
 mkdir test_cases
 ```
 
-Secondly, test case xml file can be added to the `test_cases` folder.
+Now, `test_case.xml` file can be added to the newly created folder
 
 ```xml
 
@@ -111,20 +164,17 @@ Secondly, test case xml file can be added to the `test_cases` folder.
     </actors>
 
     <steps stopOnError="true">
-        <!-- Prompt the user to enter the required data to run the test -->
         <interact id="validationData" desc="Setup parameters to validate the LDES">
-            <request desc="URL of the LDES to validate" name="ldes"/>
+            <request desc="URL of the LDES to validate" name="ldesUrl"/>
             <request desc="Shacl shape that must be used for validating" name="shaclShape" inputType="UPLOAD"/>
+            <request desc="Amount of seconds between each polling attempt" name="pollingInterval"/>
         </interact>
-        <log>"Starting shacl validation test"</log>
-        <!-- Step 3: Check relation timestamp consistency. -->
-        <!-- Notice here how we refer to the address of the validation service using the domain-level "validationServiceAddress" configuration property. -->
-        <verify output="validatorOutput" id="shaclValidationStep" desc="validate against shacl"
-                handler="http://testbed-shacl-validator:8080/services/validation?wsdl">
-            <input name="ldes-url">$validationData{ldes}</input>
-            <input name="shacl-shape">$validationData{shaclShape}</input>
-        </verify>
-        <log>"shacl verification finished"</log>
+        <assign to="delayDuration" type="number">concat($validationData{pollingInterval}, '000')</assign>
+        <call id="validateLdes" path="scriptlets/validate-ldes.xml">
+            <input name="ldesUrl">$validationData{ldesUrl}</input>
+            <input name="shaclShape">$validationData{shaclShape}</input>
+            <input name="delayDuration">$delayDuration</input>
+        </call>
     </steps>
 
     <output>
@@ -145,21 +195,21 @@ Some interesting things we see in this test case, are the `interact` block, as w
 #### interact
 
 This block is responsible for prompting the user/tester to enter some data that will be used for the test. In this
-specific case, it will be the URL of the LDES that must be validated.
+specific case, it will be the URL of the LDES that must be validated, a SHACL shape file and a polling interval on which
+the LDES Client status must be checked.
 
-#### verify
+#### call
 
-This block is responsible for the verifying the LDES by calling the external service, which is this TestBed Shacl
-Validator service. The most important part to notice here is the `handler` attribute, where the external TestBed Shacl
-Validator service will be set. In this case, the docker compose service name must be used, followed by the port. After
-that, the "fixed" uri is placed, which will call the right validation service, which is in this case
-`/services/validation?wsdl`
+This block is responsible for executing the scriptlet, which is responsible for creating an LDIO pipeline, checking when
+the LDES Client has finished with REPLICATING, performing the SHACL validation and destroying the pipeline afterward.
 
-Another thing that can be noticed here, are the input parameters. These two parameters are required to let the test run.
+Another thing that can be noticed here, are the input parameters. These three parameters are required to let the test
+run.
 
-1. `ldes-url`: the url of the LDES that must be validated. The value here is fetched from the prompted input
-2. `shacl-shape`: the SHACL shape that will be used to validate all the members against to. Here is the value also
+1. `ldesUrl`: the url of the LDES that must be validated. The value here is fetched from the prompted input
+2. `shaclShape`: the SHACL shape that will be used to validate all the members against to. Here is the value also
    fetched from the prompted input
+3. `delayDuration`: the amount of seconds on which the LDES Client must be checked
 
 To finish up this step, a test suite itself must be added as well. This can be done by adding `test_suite.xml` to the
 `validate_ldes_to_shacl_shape` folder.
@@ -206,11 +256,13 @@ This is how the file should look like:
 Most important to notice here, is that de test case declared in the `test_cases` folder, must be referred from this file
 by adding the `test case` tag with as attribute the id that has been assigned to the test case in its file.
 
-4. Compress the `validate_ldes_to_shacl_shape` folder to a zip and upload it to TestBed
+4. Add the Test Suite to the TestBed instance
 
-If everything is set up, the folder containing everything must be zipped. After that, it can be uploaded to TestBed. This can be done either by the UI, or via the REST API. If you choose to do it via the REST API, the 
+Create a ZIP file contains all the items that are in `validate_ldes_to_shacl_shape` folder. This can be uploaded to
+TestBed now. This can be done either by the UI, or via the REST API. If you choose to do it via the REST API, the
+
 ```shell
-curl -F updateSpecification=true -F specification=<SPECIFICATION_API_KEY> -F testSuite=@test_shacl_validator.zip --header "ITB_API_KEY: <DOMAIN_API_KEY>" -X POST http://localhost:9000/api/rest/testsuite/deploy;
+curl -F updateSpecification=true -F specification=<SPECIFICATION_API_KEY> -F testSuite=@test_shacl_validator.zip --header "ITB_API_KEY: <COMMUNITY_API_KEY>" -X POST http://localhost:9000/api/rest/testsuite/deploy;
 ```
 
 5. Run the test via the TestBed UI

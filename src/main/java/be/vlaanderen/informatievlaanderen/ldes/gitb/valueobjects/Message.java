@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.gitb.valueobjects;
 
+import be.vlaanderen.informatievlaanderen.ldes.gitb.ldio.valuebojects.ClientStatus;
 import com.gitb.core.AnyContent;
 import com.gitb.core.ValueEmbeddingEnumeration;
 
@@ -15,15 +16,10 @@ public class Message {
 	public AnyContent convertToAnyContent() {
 		final AnyContent message = new AnyContent();
 		message.setName(name);
-		message.setValue("No such operation available: %s".formatted(value));
+		message.setValue(value);
 		message.setEmbeddingMethod(ValueEmbeddingEnumeration.STRING);
+		message.setType("string");
 		return message;
-	}
-
-	public AnyContent convertToContext() {
-		final AnyContent context = new AnyContent();
-		context.getItem().add(convertToAnyContent());
-		return context;
 	}
 
 	public static Message error(String value) {
@@ -32,6 +28,10 @@ public class Message {
 
 	public static Message info(String value) {
 		return new Message("MESSAGE", value);
+	}
+
+	public static Message statusMessage(ClientStatus status) {
+		return new Message("STATUS", status.name());
 	}
 
 }

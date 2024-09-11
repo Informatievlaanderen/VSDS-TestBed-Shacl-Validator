@@ -21,14 +21,14 @@ import static be.vlaanderen.informatievlaanderen.ldes.gitb.valueobjects.Validati
  * Spring component that realises the validation service.
  */
 @Component
-public class ValidationServiceImpl implements ValidationService {
+public class ShaclValidationService implements ValidationService {
 
-	private static final Logger LOG = LoggerFactory.getLogger(ValidationServiceImpl.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ShaclValidationService.class);
 	private static final String SERVICE_NAME = "LdesMemberShaclValidator";
 
 	private final RepositoryValidator repositoryValidator;
 
-	public ValidationServiceImpl(RepositoryValidator repositoryValidator) {
+	public ShaclValidationService(RepositoryValidator repositoryValidator) {
 		this.repositoryValidator = repositoryValidator;
 	}
 

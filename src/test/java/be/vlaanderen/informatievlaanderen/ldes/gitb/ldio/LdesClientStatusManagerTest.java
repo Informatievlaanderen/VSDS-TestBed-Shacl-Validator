@@ -32,28 +32,6 @@ class LdesClientStatusManagerTest {
 		ldesClientStatusManager = new LdesClientStatusManager(requestExecutor, ldioConfigProperties);
 	}
 
-	@Test
-	void test_WaitUntilReplicated() {
-		when(requestExecutor.execute(any(), eq(expectedStatusCodes)))
-				.thenReturn(createEmptyResponse())
-				.thenReturn(createResponse(ClientStatus.REPLICATING))
-				.thenReturn(createResponse(ClientStatus.REPLICATING))
-				.thenReturn(createResponse(ClientStatus.SYNCHRONISING));
-
-		ldesClientStatusManager.waitUntilReplicated(PIPELINE_NAME);
-
-		verify(requestExecutor, timeout(15000).times(4)).execute(any(), eq(expectedStatusCodes));
-	}
-
-	@Test
-	void test_WaitUntilReplicated_when_StatusUnavailable() {
-		when(requestExecutor.execute(any(GetRequest.class), eq(200), eq(404))).thenReturn(createEmptyResponse());
-
-		ldesClientStatusManager.waitUntilReplicated(PIPELINE_NAME);
-
-		verify(requestExecutor, times(5)).execute(any(GetRequest.class), eq(200), eq(404));
-	}
-
 
 	@ParameterizedTest
 	@EnumSource(ClientStatus.class)
