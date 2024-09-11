@@ -1,21 +1,23 @@
 # VSDS TestBed Shacl Validator
 
 <!-- TOC -->
+
 * [VSDS TestBed Shacl Validator](#vsds-testbed-shacl-validator)
-  * [Introduction](#introduction)
-  * [ReplicationProcesssingService](#replicationprocesssingservice)
-      * [startReplicating](#startreplicating)
-      * [haltWhenReplicated](#haltwhenreplicated)
-      * [destroyPipeline](#destroypipeline)
-  * [ShaclValidationService](#shaclvalidationservice)
-  * [How to run in Docker](#how-to-run-in-docker)
-    * [Prerequisites](#prerequisites)
-    * [Steps to use the TestBed Shacl Validator](#steps-to-use-the-testbed-shacl-validator)
-      * [interact](#interact)
-      * [call](#call)
-  * [Building and running the project](#building-and-running-the-project)
-    * [Live reload for development](#live-reload-for-development)
-    * [Packaging using Docker](#packaging-using-docker)
+    * [Introduction](#introduction)
+    * [ReplicationProcesssingService](#replicationprocesssingservice)
+        * [startReplicating](#startreplicating)
+        * [haltWhenReplicated](#haltwhenreplicated)
+        * [destroyPipeline](#destroypipeline)
+    * [ShaclValidationService](#shaclvalidationservice)
+    * [How to run in Docker](#how-to-run-in-docker)
+        * [Prerequisites](#prerequisites)
+        * [Steps to use the TestBed Shacl Validator](#steps-to-use-the-testbed-shacl-validator)
+            * [interact](#interact)
+            * [call](#call)
+    * [Building and running the project](#building-and-running-the-project)
+        * [Live reload for development](#live-reload-for-development)
+        * [Packaging using Docker](#packaging-using-docker)
+
 <!-- TOC -->
 
 ## Introduction
@@ -197,6 +199,12 @@ Some interesting things we see in this test case, are the `interact` block, as w
 This block is responsible for prompting the user/tester to enter some data that will be used for the test. In this
 specific case, it will be the URL of the LDES that must be validated, a SHACL shape file and a polling interval on which
 the LDES Client status must be checked.
+
+| Name of the parameter | Description                                                                                                                                                                                                                                                            |
+|:---------------------:|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|        ldesUrl        | URL of the LDES to be validated                                                                                                                                                                                                                                        |
+|      SHACL shape      | SHACL shape that will be used to validate the LDES                                                                                                                                                                                                                     |
+|    pollingInterval    | Interval in which the LDES Client status will be checked in seconds. Keep in mind if the LDES to validate contains 1M members, it can take a very long time to replicate. Therefore, it can be better to configure a larger interval (e.g. an hour or even half a day) |
 
 #### call
 
