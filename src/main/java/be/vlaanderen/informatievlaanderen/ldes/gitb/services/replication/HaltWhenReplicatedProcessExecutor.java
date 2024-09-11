@@ -43,7 +43,7 @@ public class HaltWhenReplicatedProcessExecutor implements ProcessExecutor {
 		try {
 			status = ldesClientStatusManager.getClientStatus(processParameters.getPipelineName());
 		} catch (LdesClientStatusUnavailableException e) {
-			log.atInfo().log("Client status unavailable");
+			log.atWarn().log("Client status unavailable");
 			return new ProcessResult(
 					TestResultType.FAILURE,
 					Message.error(e.getMessage())
@@ -58,7 +58,7 @@ public class HaltWhenReplicatedProcessExecutor implements ProcessExecutor {
 					new Message("MESSAGE", "PIPELINE will be PAUSED soon")
 			);
 		}
-		log.atInfo().log("Pipeline {} is still REPLICATING", processParameters.getPipelineName());
+		log.atDebug().log("Pipeline {} is still REPLICATING", processParameters.getPipelineName());
 		return new ProcessResult(
 				TestResultType.SUCCESS,
 				Message.statusMessage(status),
