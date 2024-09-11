@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.gitb.services.replication;
 
 import be.vlaanderen.informatievlaanderen.ldes.gitb.ldio.LdesClientStatusManager;
 import be.vlaanderen.informatievlaanderen.ldes.gitb.ldio.LdioPipelineManager;
+import be.vlaanderen.informatievlaanderen.ldes.gitb.ldio.excpeptions.LdesClientStatusUnavailableException;
 import be.vlaanderen.informatievlaanderen.ldes.gitb.ldio.valuebojects.ClientStatus;
 import be.vlaanderen.informatievlaanderen.ldes.gitb.valueobjects.Message;
 import be.vlaanderen.informatievlaanderen.ldes.gitb.valueobjects.ProcessParameters;
@@ -66,5 +67,21 @@ class HaltWhenReplicatedProcessExecutorTest {
 				.usingRecursiveComparison()
 				.isEqualTo(expected);
 		verify(ldioPipelineManager).haltPipeline(SESSION_ID.getPipelineName());
+	}
+
+	@Test
+	void given_ClientStatusUnavailable_test_Execute() {
+		final ProcessResult expected = new ProcessResult(
+				TestResultType.FAILURE,
+				new Message("ERROR", "Ldes client status not available.")
+		);
+		when(ldesClientStatusManager.getClientStatus(anyString())).thenThrow(LdesClientStatusUnavailableException.class);
+
+		final ProcessResult actual = haltWhenReplicatedProcessExecutor.execute(new ProcessParameters(SESSION_UUID, List.of()));
+
+		assertThat(actual)
+				.usingRecursiveComparison()
+				.isEqualTo(expected);
+		verifyNoInteractions(ldioPipelineManager);
 	}
 }

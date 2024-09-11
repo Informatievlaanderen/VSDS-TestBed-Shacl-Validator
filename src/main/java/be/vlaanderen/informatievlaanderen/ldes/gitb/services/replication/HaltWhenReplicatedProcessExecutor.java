@@ -46,8 +46,7 @@ public class HaltWhenReplicatedProcessExecutor implements ProcessExecutor {
 			log.atInfo().log("Client status unavailable");
 			return new ProcessResult(
 					TestResultType.FAILURE,
-					new Message("ERROR", e.getMessage()),
-					Message.statusMessage(ClientStatus.ERROR)
+					Message.error(e.getMessage())
 			);
 		}
 		if(ClientStatus.isSuccessfullyReplicated(status)) {
