@@ -40,7 +40,7 @@ jobs:
         if: ${{ github.actor == 'dependabot[bot]' || github.event.pull_request.head.repo.fork }}
         run: mvn -B verify
       - name: Upload JARs
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: artifacts
           path: |
