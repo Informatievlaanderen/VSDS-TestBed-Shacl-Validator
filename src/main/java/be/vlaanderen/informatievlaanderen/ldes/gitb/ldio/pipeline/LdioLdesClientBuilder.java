@@ -5,7 +5,12 @@ import java.util.Map;
 
 public class LdioLdesClientBuilder extends LdioComponentBuilder {
 	public LdioLdesClientBuilder() {
-		super("Ldio:LdesClient", new HashMap<>(Map.of("source-format", "application/n-quads")));
+		super("Ldio:LdesClient",
+				new HashMap<>(Map.of(
+						"source-format", "application/n-quads",
+						"state", "sqlite"
+				))
+		);
 	}
 
 	public LdioLdesClientBuilder withUrl(String url) {
