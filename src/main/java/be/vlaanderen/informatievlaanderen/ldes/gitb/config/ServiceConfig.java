@@ -16,8 +16,8 @@ import javax.xml.namespace.QName;
 public class ServiceConfig {
 
     @Bean
-    public EndpointImpl validationService(Bus cxfBus, ShaclValidationService shaclValidationServiceImplementation) {
-        EndpointImpl endpoint = new EndpointImpl(cxfBus, shaclValidationServiceImplementation);
+    public EndpointImpl validationService(Bus cxfBus, ShaclValidationService shaclValidationService) {
+        EndpointImpl endpoint = new EndpointImpl(cxfBus, shaclValidationService);
         endpoint.setServiceName(new QName("http://www.gitb.com/vs/v1/", "ValidationService"));
         endpoint.setEndpointName(new QName("http://www.gitb.com/vs/v1/", "ValidationServicePort"));
         endpoint.publish("/validation");
