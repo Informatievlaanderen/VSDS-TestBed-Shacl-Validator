@@ -1,25 +1,22 @@
 # VSDS TestBed Shacl Validator
 
 <!-- TOC -->
-
 * [VSDS TestBed Shacl Validator](#vsds-testbed-shacl-validator)
-    * [Introduction](#introduction)
-    * [ReplicationProcesssingService](#replicationprocesssingservice)
-        * [startReplicating](#startreplicating)
-        * [haltWhenReplicated](#haltwhenreplicated)
-        * [destroyPipeline](#destroypipeline)
-    * [ShaclValidationService](#shaclvalidationservice)
-    * [How to run in Docker](#how-to-run-in-docker)
-        * [Prerequisites](#prerequisites)
-        * [Steps to use the TestBed Shacl Validator](#steps-to-use-the-testbed-shacl-validator)
-            * [interact](#interact)
-            * [call](#call)
-    * [Building and running the project](#building-and-running-the-project)
-        * [Live reload for development](#live-reload-for-development)
-        * [Packaging using Docker](#packaging-using-docker)
-
+  * [Introduction](#introduction)
+  * [ReplicationProcesssingService](#replicationprocesssingservice)
+      * [startReplicating](#startreplicating)
+      * [haltWhenReplicated](#haltwhenreplicated)
+      * [destroyPipeline](#destroypipeline)
+  * [ShaclValidationService](#shaclvalidationservice)
+  * [How to run in Docker](#how-to-run-in-docker)
+    * [Prerequisites](#prerequisites)
+    * [Steps to use the TestBed Shacl Validator](#steps-to-use-the-testbed-shacl-validator)
+      * [interact](#interact)
+      * [call](#call)
+  * [Building and running the project](#building-and-running-the-project)
+    * [Live reload for development](#live-reload-for-development)
+    * [Packaging using Docker](#packaging-using-docker)
 <!-- TOC -->
-
 ## Introduction
 
 This application implements the [GITB test service APIs](https://www.itb.ec.europa.eu/docs/services/latest/) in a  
@@ -169,13 +166,16 @@ Now, `test_case.xml` file can be added to the newly created folder
         <interact id="validationData" desc="Setup parameters to validate the LDES">
             <request desc="URL of the LDES to validate" name="ldesUrl"/>
             <request desc="Shacl shape that must be used for validating" name="shaclShape" inputType="UPLOAD"/>
-            <request desc="Amount of seconds between each polling attempt" name="pollingInterval"/>
+            <request desc="Amount of seconds between each polling attempt" name="pollingInterval" inputType="TEXT"/>
         </interact>
-        <assign to="delayDuration" type="number">concat($validationData{pollingInterval}, '000')</assign>
+        <assign to="delayDuration">concat($validationData{pollingInterval}, '000')</assign>
+        <assign to="addresses{processing}">"http://testbed-shacl-validator:8080/services/process?wsdl"</assign>
+        <assign to="addresses{validation}">"http://testbed-shacl-validator:8080/services/validation?wsdl"</assign>
         <call id="validateLdes" path="scriptlets/validate-ldes.xml">
             <input name="ldesUrl">$validationData{ldesUrl}</input>
             <input name="shaclShape">$validationData{shaclShape}</input>
             <input name="delayDuration">$delayDuration</input>
+            <input name="addresses">$addresses</input>
         </call>
     </steps>
 

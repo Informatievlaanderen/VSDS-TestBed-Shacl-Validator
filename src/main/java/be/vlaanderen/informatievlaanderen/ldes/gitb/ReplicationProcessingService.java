@@ -9,11 +9,14 @@ import com.gitb.core.Metadata;
 import com.gitb.core.TypedParameters;
 import com.gitb.ps.Void;
 import com.gitb.ps.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ReplicationProcessingService implements ProcessingService {
 	private static final String SERVICE_NAME = "ReplicationProcessingService";
+	private static final Logger log = LoggerFactory.getLogger(ReplicationProcessingService.class);
 	private final ProcessExecutors processExecutors;
 
 	public ReplicationProcessingService(ProcessExecutors processExecutors) {
@@ -53,6 +56,7 @@ public class ReplicationProcessingService implements ProcessingService {
 
 	@Override
 	public ProcessResponse process(ProcessRequest parameters) {
+		log.info("Received 'process' command with '{}' operation from test bed for session [{}]", parameters.getOperation(), parameters.getSessionId());
 		return processExecutors.getProcessExecutor(parameters.getOperation())
 				.map(processExecutor -> processExecutor.execute(new ProcessParameters(parameters.getSessionId(), parameters.getInput())))
 				.orElseGet(() -> ProcessResult.invalidOperation(parameters.getOperation()))

@@ -1,22 +1,23 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<scriptlet  id="validate-ldes" xmlns="http://www.gitb.com/tdl/v1/">
+<scriptlet id="validate-ldes" xmlns="http://www.gitb.com/tdl/v1/">
     <params>
         <var name="ldesUrl" type="string"/>
-        <var name="shaclShape" type="string" />
+        <var name="shaclShape" type="string"/>
         <var name="delayDuration" type="number">
             <value>60000</value>
         </var>
+        <var name="addresses" type="map" />
     </params>
     <steps stopOnError="true">
         <process output="startupReport" desc="Start Replication" id="startReplicatingProcess"
-                 handler="http://testbed-shacl-validator:8080/services/process?wsdl">
+                 handler="$addresses{processing}">
             <operation>startReplicating</operation>
             <input name="ldes-url">$ldesUrl</input>
         </process>
         <log>"Waiting for the LDES Client status to be available"</log>
         <process desc="Wait until client is available" handler="DelayProcessor">
             <operation>delay</operation>
-            <input>$delayDuration</input>
+            <input>5000</input>
         </process>
 
         <log>"Start checking LDES Client status"</log>
@@ -27,7 +28,7 @@
                     <operation>delay</operation>
                     <input>$delayDuration</input>
                 </process>
-                <process output="replicationOutput" handler="http://testbed-shacl-validator:8080/services/process?wsdl">
+                <process output="replicationOutput" handler="$addresses{processing}">
                     <operation>haltWhenReplicated</operation>
                 </process>
                 <log level="DEBUG">$replicationOutput{STATUS}</log>
@@ -37,12 +38,13 @@
         <log>"Starting shacl validation"</log>
 
         <verify output="validatorOutput" id="shaclValidationStep" desc="validate against shacl"
-                handler="http://testbed-shacl-validator:8080/services/validation?wsdl">
+                handler="$addresses{validation}">
             <input name="shacl-shape">$shaclShape</input>
         </verify>
         <log>"shacl verification finished"</log>
+        <process desc="Delete pipeline" handler="$addresses{processing}" operation="destroyPipeline"/>
     </steps>
     <output name="validatorOutput">
         $validatorOutput
     </output>
-</scriptlet >
+</scriptlet>
