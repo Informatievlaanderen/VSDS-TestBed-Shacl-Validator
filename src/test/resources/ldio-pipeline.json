@@ -20,7 +20,7 @@
       "config": {
         "sparql-host": "http://my-sparql-host.net",
         "repository-id": "validation-pipeline-test-pipeline-uuid",
-        "batch-size": 1
+        "batch-size": 250
       }
     }
   ]
