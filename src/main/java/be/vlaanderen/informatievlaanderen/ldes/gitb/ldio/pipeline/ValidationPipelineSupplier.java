@@ -31,7 +31,7 @@ public class ValidationPipelineSupplier {
 				List.of(new LdioRepositorySinkBuilder()
 						.withSparqlHost(sparqlHost)
 						.withRepositoryId(pipelineName)
-						.withBatchSize(1)
+						.withBatchSize(250)
 						.build())
 		);
 	}
