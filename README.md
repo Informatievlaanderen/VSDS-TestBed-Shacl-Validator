@@ -10,6 +10,7 @@
   * [ShaclValidationService](#shaclvalidationservice)
   * [How to run in Docker](#how-to-run-in-docker)
     * [Prerequisites](#prerequisites)
+    * [Set up a TestBed instance yourself](#set-up-a-testbed-instance-yourself)
     * [Steps to use the TestBed Shacl Validator](#steps-to-use-the-testbed-shacl-validator)
       * [interact](#interact)
       * [call](#call)
@@ -17,6 +18,7 @@
     * [Live reload for development](#live-reload-for-development)
     * [Packaging using Docker](#packaging-using-docker)
 <!-- TOC -->
+
 ## Introduction
 
 This application implements the [GITB test service APIs](https://www.itb.ec.europa.eu/docs/services/latest/) in a  
@@ -80,6 +82,26 @@ found [here](https://www.itb.ec.europa.eu/docs/services/latest/validation/)
 
 All these services are set up in the [`./docker/docker-compose.yaml`](./docker/docker-compose.yaml) config file, but
 here are dummy environment variables used that must be changed in a production environment
+
+### Set up a TestBed instance yourself
+
+If you need to set up a TestBed instance by yourself, there are some several steps you must do.
+Go to [http://localhost:9000](http://localhost:9000) and log in. When logging in for the first time, the credentials can
+be found in the logs of the UI container. If logged in, perform the following steps:
+
+1. Create a _community_. (If you want to use the REST API, this is required, otherwise, this can be omitted)
+2. Create a _domain_, which **can** be linked to the created community
+3. Create in the domain a _specification_
+4. The _test suite_ that will be created later on in this tutorial can be uploaded in this specification
+5. Create an _organisation_
+6. Create a _system_ in the created organisation
+7. Create _statements_ in the system based on the testsuite uploaded into the specification
+8. Now the _test session_ based on the statements can be run
+
+How to exactly configure each part, can be
+found [here](https://joinup.ec.europa.eu/collection/interoperability-test-bed-repository/solution/interoperability-test-bed/documentation) <br />
+How TestBed work in general, can be
+found [here](https://joinup.ec.europa.eu/collection/interoperability-test-bed-repository/solution/interoperability-test-bed/detailed-information)
 
 ### Steps to use the TestBed Shacl Validator
 
@@ -268,6 +290,10 @@ by adding the `test case` tag with as attribute the id that has been assigned to
 
 Create a ZIP file contains all the items that are in `validate_ldes_to_shacl_shape` folder. This can be uploaded to
 TestBed now. This can be done either by the UI, or via the REST API. If you choose to do it via the REST API, the
+
+> [!IMPORTANT]
+> When creating the ZIP file, make sure the ZIP contains **the contents** of the `validate_ldes_to_shacl_shape` folder
+> and **not the folder itself**.
 
 ```shell
 curl -F updateSpecification=true -F specification=<SPECIFICATION_API_KEY> -F testSuite=@test_shacl_validator.zip --header "ITB_API_KEY: <COMMUNITY_API_KEY>" -X POST http://localhost:9000/api/rest/testsuite/deploy;
