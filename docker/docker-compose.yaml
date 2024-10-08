@@ -63,16 +63,23 @@ services:
       - "7200:7200"
 
   ldio-workbench:
-    image: ghcr.io/informatievlaanderen/ldi-orchestrator:latest
+    image: ldes/ldi-orchestrator:2.9.0-SNAPSHOT
     container_name: ldio-workbench
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://ldio-workbench:8080/actuator/health"]
+      interval: 12s
+      timeout: 3s
+      retries: 12
     ports:
       - "8888:8080"
 
   testbed-shacl-validator:
     image: ghcr.io/informatievlaanderen/testbed-shacl-validator:latest
     depends_on:
-      - graphdb
-      - ldio-workbench
+      graphdb:
+        condition: service_started
+      ldio-workbench:
+        condition: service_healthy
     environment:
       - LDIO_HOST=http://ldio-workbench:8080
       - LDIO_SPARQLHOST=http://graphdb:7200
