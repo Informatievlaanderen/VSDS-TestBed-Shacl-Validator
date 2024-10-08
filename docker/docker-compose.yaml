@@ -74,7 +74,7 @@ services:
       - "8888:8080"
 
   testbed-shacl-validator:
-    image: ghcr.io/informatievlaanderen/testbed-shacl-validator:latest
+    image: ghcr.io/informatievlaanderen/testbed-shacl-validator:20241001154215
     depends_on:
       graphdb:
         condition: service_started
