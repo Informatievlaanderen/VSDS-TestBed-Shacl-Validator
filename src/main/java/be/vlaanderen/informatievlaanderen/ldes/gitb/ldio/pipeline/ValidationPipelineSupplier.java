@@ -1,6 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.gitb.ldio.pipeline;
 
-import be.vlaanderen.informatievlaanderen.ldes.gitb.ldio.ldes.EventStreamProperties;
 import be.vlaanderen.informatievlaanderen.ldes.gitb.ldio.valuebojects.LdioPipeline;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -9,12 +8,12 @@ import java.util.List;
 
 public class ValidationPipelineSupplier {
 	private static final String PIPELINE_DESCRIPTION = "Pipeline that will only replicate an LDES for validation purposes";
-	private final EventStreamProperties eventStreamProperties;
+	private final String ldesUrl;
 	private final String sparqlHost;
 	private final String pipelineName;
 
-	public ValidationPipelineSupplier(EventStreamProperties eventStreamProperties, String sparqlHost, String pipelineName) {
-		this.eventStreamProperties = eventStreamProperties;
+	public ValidationPipelineSupplier(String ldesUrl, String sparqlHost, String pipelineName) {
+		this.ldesUrl = ldesUrl;
 		this.sparqlHost = sparqlHost;
 		this.pipelineName = pipelineName;
 	}
@@ -23,11 +22,7 @@ public class ValidationPipelineSupplier {
 		return new LdioPipeline(
 				pipelineName,
 				PIPELINE_DESCRIPTION,
-				new LdioLdesClientBuilder()
-						.withUrl(eventStreamProperties.ldesServerUrl())
-						.withVersionOfProperty(eventStreamProperties.versionOfPath())
-						.withTimestampProperty(eventStreamProperties.timestampPath())
-						.build(),
+				new LdioLdesClientBuilder().withUrl(ldesUrl).build(),
 				List.of(new LdioRepositorySinkBuilder()
 						.withSparqlHost(sparqlHost)
 						.withRepositoryId(pipelineName)

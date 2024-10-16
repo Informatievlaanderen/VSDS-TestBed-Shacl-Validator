@@ -7,10 +7,8 @@
       "urls": "http://test-server/test-collection",
       "source-format": "text/turtle",
       "state": "sqlite",
-      "timestamp-path": "http://www.w3.org/ns/prov#generatedAtTime",
       "materialisation": {
-        "enabled": true,
-        "version-of-property": "http://purl.org/dc/terms/isVersionOf"
+        "enabled": true
       }
     }
   },

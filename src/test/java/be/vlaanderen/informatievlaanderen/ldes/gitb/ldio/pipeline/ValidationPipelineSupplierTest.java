@@ -1,6 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.gitb.ldio.pipeline;
 
-import be.vlaanderen.informatievlaanderen.ldes.gitb.ldio.ldes.EventStreamProperties;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -20,14 +19,13 @@ class ValidationPipelineSupplierTest {
 
 	@Test
 	void test_createJson() throws IOException {
-		final ValidationPipelineSupplier factory = new ValidationPipelineSupplier(new EventStreamProperties(LDES_SERVER_URL, "http://purl.org/dc/terms/isVersionOf", "http://www.w3.org/ns/prov#generatedAtTime"), SPARQL_HOST, PIPELINE_NAME);
+		final ValidationPipelineSupplier factory = new ValidationPipelineSupplier(LDES_SERVER_URL, SPARQL_HOST, PIPELINE_NAME);
 		final JsonNode expectedJson = readJsonNode();
 
 		final String result = factory.getValidationPipelineAsJson();
 		final JsonNode actualJson = objectMapper.readTree(result);
 
-		assertThat(actualJson)
-				.isEqualTo(expectedJson);
+		assertThat(actualJson).isEqualTo(expectedJson);
 
 	}
 

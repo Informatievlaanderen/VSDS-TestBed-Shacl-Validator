@@ -1,12 +1,10 @@
 package be.vlaanderen.informatievlaanderen.ldes.gitb.ldio;
 
 import be.vlaanderen.informatievlaanderen.ldes.PostRequestAssert;
+import be.vlaanderen.informatievlaanderen.ldes.gitb.ldio.config.LdioConfigProperties;
 import be.vlaanderen.informatievlaanderen.ldes.gitb.requestexecutor.RequestExecutor;
 import be.vlaanderen.informatievlaanderen.ldes.gitb.requestexecutor.requests.DeleteRequest;
 import be.vlaanderen.informatievlaanderen.ldes.gitb.requestexecutor.requests.PostRequest;
-import be.vlaanderen.informatievlaanderen.ldes.gitb.ldio.ldes.EventStreamFetcher;
-import be.vlaanderen.informatievlaanderen.ldes.gitb.ldio.ldes.EventStreamProperties;
-import be.vlaanderen.informatievlaanderen.ldes.gitb.ldio.config.LdioConfigProperties;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.entity.ContentType;
@@ -25,7 +23,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.assertArg;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class LdioPipelineManagerTest {
@@ -35,8 +32,6 @@ class LdioPipelineManagerTest {
 	private static final String PIPELINE_UUID = "test-pipeline-uuid";
 	private static final String PIPELINE_NAME = PIPELINE_NAME_TEMPLATE.formatted(PIPELINE_UUID);
 	@Mock
-	private EventStreamFetcher eventStreamFetcher;
-	@Mock
 	private RequestExecutor requestExecutor;
 	private LdioPipelineManager ldioPipelineManager;
 
@@ -45,17 +40,15 @@ class LdioPipelineManagerTest {
 		final LdioConfigProperties ldioConfigProperties = new LdioConfigProperties();
 		ldioConfigProperties.setHost(LDIO_HOST);
 		ldioConfigProperties.setSparqlHost(SPARQL_HOST);
-		ldioPipelineManager = new LdioPipelineManager(eventStreamFetcher, requestExecutor, ldioConfigProperties);
+		ldioPipelineManager = new LdioPipelineManager(requestExecutor, ldioConfigProperties);
 	}
 
 	@Test
 	void test_InitPipeline() throws IOException {
 		final JsonNode expectedJson = new ObjectMapper().readTree(ResourceUtils.getFile("classpath:ldio-pipeline.json"));
-		when(eventStreamFetcher.fetchProperties(LDES_SERVER_URL)).thenReturn(new EventStreamProperties(LDES_SERVER_URL, "http://purl.org/dc/terms/isVersionOf", "http://www.w3.org/ns/prov#generatedAtTime"));
 
 		ldioPipelineManager.initPipeline(LDES_SERVER_URL, PIPELINE_NAME);
 
-		verify(eventStreamFetcher).fetchProperties(LDES_SERVER_URL);
 		verify(requestExecutor).execute(
 				assertArg(actual -> assertThat(actual)
 						.asInstanceOf(new InstanceOfAssertFactory<>(PostRequest.class, PostRequestAssert::new))
