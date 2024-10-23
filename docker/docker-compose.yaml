@@ -63,7 +63,7 @@ services:
       - "7200:7200"
 
   ldio-workbench:
-    image: ldes/ldi-orchestrator:2.9.0-SNAPSHOT
+    image: ghcr.io/informatievlaanderen/ldi-orchestrator:20241021180535
     container_name: ldio-workbench
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://ldio-workbench:8080/actuator/health"]
