@@ -7,7 +7,7 @@ public class LdioLdesClientBuilder extends LdioComponentBuilder {
 	public LdioLdesClientBuilder() {
 		super("Ldio:LdesClient",
 				new HashMap<>(Map.of(
-						"source-format", "application/n-quads",
+						"source-format", "text/turtle",
 						"state", "sqlite"
 				))
 		);

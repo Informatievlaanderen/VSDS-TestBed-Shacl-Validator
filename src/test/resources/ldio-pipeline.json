@@ -5,7 +5,7 @@
     "name": "Ldio:LdesClient",
     "config": {
       "urls": "http://test-server/test-collection",
-      "source-format": "application/n-quads",
+      "source-format": "text/turtle",
       "state": "sqlite",
       "timestamp-path": "http://www.w3.org/ns/prov#generatedAtTime",
       "materialisation": {
