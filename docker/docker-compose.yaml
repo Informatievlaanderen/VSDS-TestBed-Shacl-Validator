@@ -63,7 +63,7 @@ services:
       - "7200:7200"
 
   ldio-workbench:
-    image: ghcr.io/informatievlaanderen/ldi-orchestrator:20241021180535
+    image: ldes/ldi-orchestrator:2.10.0-SNAPSHOT
     container_name: ldio-workbench
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://ldio-workbench:8080/actuator/health"]
@@ -74,7 +74,7 @@ services:
       - "8888:8080"
 
   testbed-shacl-validator:
-    image: ghcr.io/informatievlaanderen/testbed-shacl-validator:20241104104943
+    image: ghcr.io/informatievlaanderen/testbed-shacl-validator:20241113094029
     depends_on:
       graphdb:
         condition: service_started
